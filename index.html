@@ -1,0 +1,2535 @@
+    <!DOCTYPE html>
+    <html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Food Maveriks - Beverage Formulation & Services</title>
+        
+        <!-- Google Fonts (Combined from both projects) -->
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&family=Playfair+Display:wght@700;900&family=Inter:wght@500;600;700&display=swap" rel="stylesheet">
+        
+        <!-- Font Awesome for Icons -->
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+        
+        <!-- Material Icons for new stats cards -->
+        <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+
+        <!-- GSAP Core and ScrollTrigger -->
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.11.5/gsap.min.js" defer></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.11.5/ScrollTrigger.min.js" defer></script>
+        
+        <style>
+            .main-nav.fixed-nav {
+    position: fixed;
+    top: -100px;
+    
+    /* --- CORRECTIONS START HERE --- */
+    left: 0; /* Position to the far left of the viewport */
+    transform: none; /* Reset the horizontal transform */
+    max-width: 100%; /* Ensure the background spans the full width */
+    /* --- CORRECTIONS END HERE --- */
+
+    padding: 15px 5%;
+    background-color: rgba(255, 255, 255, 0.85);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    animation: slideDown 0.5s forwards;
+}
+            /* --- MAIN CONTENT WRAPPER --- */
+#main-content-wrapper {
+    background-color: var(--neutral-white); /* Main content has a white background */
+    position: relative;
+    z-index: 10; /* Main content scrolls over the footer */
+    overflow-x: clip; /* ADD THIS LINE: Prevents horizontal overflow from any child element */
+}
+            /* === ROOT & BASIC SETUP (UPDATED with new brand colors) === */
+            :root {
+                --primary-brand: #278c82; /* Teal from logo */
+                --accent-brand: #32b3a6; /* Lighter teal for accents */
+                --dark-brand: #1D1D1D;
+                --neutral-dark: var(--dark-brand);
+                --neutral-medium: #4A5568;
+                --neutral-light: #F7FAFC;
+                --neutral-white: #FFFFFF;
+                --gradient-primary: linear-gradient(135deg, var(--primary-brand) 0%, var(--accent-brand) 100%);
+                --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.06);
+                --shadow-md: 0 8px 30px rgba(39, 140, 130, 0.12);
+                --shadow-lg: 0 20px 60px rgba(39, 140, 130, 0.18);
+                --shadow-xl: 0 30px 80px rgba(39, 140, 130, 0.25);
+                --transition-smooth: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+                --background: #ffffff;
+                --foreground: #0a0a0a;
+                --muted-foreground: #737373;
+                --border: #e5e5e5;
+                --accent-orange: #278c82; /* Replaced orange with new primary brand color */
+            }
+            * { margin: 0; padding: 0; box-sizing: border-box; }
+            html { scroll-behavior: smooth; font-size: 16px; }
+            body {
+                font-family: 'Poppins', sans-serif;
+                background-color: var(--dark-brand); /* Set body background for footer reveal */
+                color: var(--foreground);
+                overflow: hidden; /* Start with overflow hidden for loading screen */
+                line-height: 1.6;
+                -webkit-font-smoothing: antialiased;
+                -moz-osx-font-smoothing: grayscale;
+            }
+
+            /* --- LOADING CONTAINER STYLES --- */
+            #loading-container {
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100vw;
+                height: 100vh;
+                background-color: black;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                z-index: 9999;
+                transition: opacity 1s ease-in-out;
+                font-family: 'Inter', sans-serif;
+            }
+            #vapour-canvas {
+                width: 100%;
+                height: 100%;
+            }
+            .seo-hidden {
+                position: absolute;
+                width: 0;
+                height: 0;
+                overflow: hidden;
+                user-select: none;
+                pointer-events: none;
+                opacity: 0;
+            }
+
+            /* --- MAIN CONTENT WRAPPER --- */
+            #main-content-wrapper {
+                opacity: 0;
+                pointer-events: none;
+                transition: opacity 1.5s ease-in-out;
+                background-color: var(--neutral-white); /* Main content has a white background */
+                position: relative;
+                z-index: 10; /* Main content scrolls over the footer */
+            }
+
+            /* === MAIN SITE CSS (Unchanged, with fixes) === */
+            .container { width: 90%; max-width: 1200px; margin: 0 auto; }
+            .hero-section { display: flex; align-items: center; justify-content: center; min-height: 700px; height: 100vh; position: relative; overflow: hidden; background-color: #ffffff; padding: 0 5%; }
+            .main-nav { position: absolute; top: 0; left: 50%; transform: translateX(-50%); width: 100%; padding: 25px 5%; z-index: 1000; display: flex; justify-content: space-between; align-items: center; max-width: 1320px; transition: all 0.4s ease-in-out; }
+            .main-nav.fixed-nav { position: fixed; top: -100px; padding: 15px 5%; background-color: rgba(255, 255, 255, 0.85); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); box-shadow: 0 4px 12px rgba(0,0,0,0.1); animation: slideDown 0.5s forwards; }
+            @keyframes slideDown { from { top: -100px; } to { top: 0; } }
+            .nav-logo a { text-decoration: none; }
+            .nav-logo img { height: 48px; width: auto; display: block; }
+            .nav-links { list-style: none; display: flex; gap: 40px; }
+            .nav-links a { text-decoration: none; color: #555; font-weight: 500; transition: color 0.3s ease; }
+            .nav-links a:hover { color: var(--primary-brand); }
+            .hero-layout { display: flex; align-items: center; justify-content: space-between; width: 100%; max-width: 1200px; position: relative; z-index: 1; padding-top: 60px; }
+            .hero-content { flex-basis: 48%; text-align: left; }
+            .hero-headline { font-size: 4.2rem; font-weight: 700; color: #2c2c2c; line-height: 1.15; margin-bottom: 25px; letter-spacing: -1px; }
+            .hero-paragraph { font-size: 1.1rem; line-height: 1.7; color: #555; margin-bottom: 40px; max-width: 500px; }
+            
+            /* === HERO ICON SERVICES (Animation Removed) === */
+            .hero-icon-services {
+                display: flex;
+                gap: 10px;
+                margin-top: 50px;
+                width: 100%;
+                justify-content: space-between;
+                align-items: flex-start;
+            }
+            .hero-icon-services .service-item {
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                gap: 10px;
+                text-align: center;
+                width: 90px;
+                flex-shrink: 0;
+            }
+            .hero-icon-services .service-item i {
+                font-size: 2.2rem;
+                color: var(--primary-brand);
+                width: 40px;
+                text-align: center;
+                transition: color 0.3s ease, transform 0.3s ease; /* Added transform transition */
+            }
+            .hero-icon-services .service-item:hover i {
+                color: var(--accent-brand);
+                transform: scale(1.1); /* Simple scale animation on hover */
+            }
+            .hero-icon-services .service-item span {
+                font-size: 0.8rem;
+                font-weight: 600;
+                color: var(--neutral-medium);
+                line-height: 1.3;
+            }
+            
+            .hero-product { flex-basis: 52%; display: flex; justify-content: center; align-items: center; }
+            .hero-product img { max-width: 100%; height: auto; max-height: 70vh; filter: drop-shadow(0 20px 30px rgba(0, 0, 0, 0.15)); z-index: 100; will-change: transform, opacity; }
+            .btn { display: inline-flex; align-items: center; justify-content: center; background-color: var(--primary-brand); color: #ffffff; padding: 15px 35px; border-radius: 50px; text-decoration: none; font-weight: 700; font-size: 1rem; transition: all 0.3s ease; box-shadow: 0 8px 20px rgba(39, 140, 130, 0.3); border: none; cursor: pointer; }
+            .btn:hover { background-color: #21736b; transform: translateY(-4px); box-shadow: 0 12px 25px rgba(39, 140, 130, 0.4); }
+            .btn:active { transform: translateY(-1px); }
+            .btn-black { background-color: #000000; box-shadow: 0 8px 20px rgba(0,0,0,0.2); }
+            .btn-black:hover { background-color: #333333; box-shadow: 0 12px 25px rgba(0,0,0,0.3); }
+            .card-section { padding: 90px 0 100px 0; background-color: #f9fafb; }
+            .info-card { display: flex; background-color: #ffffff; border-radius: 20px; box-shadow: 0 15px 40px rgba(0, 0, 0, 0.07); overflow: hidden; transition: box-shadow 0.3s ease; }
+            .info-card:hover { box-shadow: 0 25px 50px rgba(0, 0, 0, 0.1); }
+            .card-image { flex-basis: 40%; position: relative; min-height: 400px; }
+            .card-image img { width: 100%; height: 100%; object-fit: cover; display: block; opacity: 0; position: absolute; left: 0; top: 0; }
+            .card-body { flex-basis: 60%; padding: 50px; display: flex; flex-direction: column; justify-content: center; }
+            .card-header-row { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 30px; flex-wrap: wrap; gap: 20px; }
+            .card-header-row h2 { font-size: 3rem; font-weight: 800; color: var(--primary-brand); margin: 0; line-height: 1.1; flex: 1; min-width: 200px; }
+            .card-header-row .btn { flex-shrink: 0; padding: 12px 30px; font-size: 0.95rem; }
+            .card-body p { font-size: 1rem; line-height: 1.8; color: #555; margin-bottom: 15px; }
+            .card-body strong { color: #2c2c2c; font-weight: 700; }
+            
+            /* === VISIONARIES SECTION (Color updated) === */
+            .visionaries-section {
+                padding: 0;
+                background-color: #f9fafb;
+            }
+            .visionaries-banner {
+                background-color: var(--primary-brand);
+                color: #ffffff;
+                border-radius: 20px;
+                padding: 40px 60px;
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+                gap: 40px;
+                margin: -40px auto 50px;
+                position: relative;
+                z-index: 5;
+                box-shadow: 0 20px 40px rgba(39, 140, 130, 0.25);
+            }
+            .visionaries-title-wrapper {
+                flex-shrink: 0;
+                position: relative;
+            }
+            .visionary-corner-icon {
+                position: absolute;
+                top: -10px;
+                left: -25px;
+                width: 32px;
+                height: 32px;
+                color: rgba(255, 255, 255, 0.4);
+            }
+            .visionaries-title-wrapper h2 {
+                font-family: 'Poppins', sans-serif;
+                font-size: 2.5rem;
+                font-weight: 700;
+                line-height: 1.2;
+                margin: 0;
+                max-width: 300px;
+            }
+            .visionaries-items {
+                display: flex;
+                justify-content: flex-end;
+                flex-grow: 1;
+                gap: 20px;
+            }
+            .visionary-item {
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                text-align: center;
+                width: 130px;
+            }
+            .visionary-icon-bg {
+                width: 80px;
+                height: 80px;
+                background-color: #FDF8E8;
+                border-radius: 50%;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                margin-bottom: 15px;
+                transition: transform 0.3s ease, box-shadow 0.3s ease;
+            }
+            .visionary-item:hover .visionary-icon-bg {
+                transform: translateY(-5px);
+                box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+            }
+            .visionary-icon-bg svg {
+                color: var(--primary-brand);
+                width: 40px;
+                height: 40px;
+                stroke-width: 1.5px;
+            }
+            .visionary-item p {
+                font-size: 0.9rem;
+                font-weight: 500;
+                line-height: 1.4;
+                color: #E2DDF0;
+            }
+            
+            .bento-section { padding: 120px 0; background-color: var(--neutral-white); }
+            .section-header { text-align: center; margin-bottom: 60px; }
+            .section-header h3 { font-weight: 700; font-size: 1.5rem; margin-bottom: 10px; color: var(--primary-brand); }
+            .section-header h2 { font-family: 'Playfair Display', serif; font-weight: 900; font-size: 3.5rem; margin-top: 0; color: var(--neutral-dark); }
+            .bento-grid { display: grid; width: 100%; grid-template-columns: 1fr; grid-auto-rows: 22rem; gap: 1rem; margin: 0 auto; }
+            @media (min-width: 1024px) { .bento-grid { grid-template-columns: repeat(3, 1fr); grid-template-rows: repeat(3, 1fr); height: 60rem; } .card-ideation { grid-column: 1 / 3; grid-row: 1 / 3; } .card-ingredient { grid-column: 3 / 4; grid-row: 1 / 2; } .card-compliance { grid-column: 3 / 4; grid-row: 2 / 3; } .card-trial { grid-column: 1 / 2; grid-row: 3 / 4; } .card-shelf-life { grid-column: 2 / 3; grid-row: 3 / 4; } .card-sop { grid-column: 3 / 4; grid-row: 3 / 4; } }
+            .bento-card { position: relative; display: flex; flex-direction: column; justify-content: space-between; overflow: hidden; border-radius: 0.75rem; background-color: var(--neutral-white); border: 1px solid var(--border); box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.07), 0 2px 4px -2px rgb(0 0 0 / 0.07); transition: all 0.3s ease-in-out; }
+            .bento-card:hover { transform: translateY(-5px); box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1); }
+            .card-background { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background-size: cover; background-position: center; background-image: var(--bg-image); opacity: 0.05; transition: opacity 0.3s ease-in-out; }
+            .bento-card:hover .card-background { opacity: 0.1; }
+            .card-content { z-index: 10; padding: 1.5rem; display: flex; flex-direction: column; gap: 0.25rem; transition: all 0.3s ease-in-out; }
+            .bento-card:hover .card-content { transform: translateY(-2.5rem); }
+            .card-content .icon { width: 3rem; height: 3rem; color: var(--primary-brand); transition: all 0.3s ease-in-out; transform-origin: left; }
+            .bento-card:hover .card-content .icon { transform: scale(0.75); }
+            .card-content h3 { font-size: 1.25rem; font-weight: 600; color: var(--neutral-dark); }
+            .card-content p { max-width: 28rem; color: var(--neutral-medium); font-size: 0.875rem; }
+            .card-cta { position: absolute; bottom: 0; width: 100%; padding: 0 1rem 1rem 1rem; display: flex; align-items: center; opacity: 0; transform: translateY(2.5rem); transition: all 0.3s ease-in-out; }
+            .bento-card:hover .card-cta { opacity: 1; transform: translateY(0); }
+            .bento-card .button { display: inline-flex; align-items: center; justify-content: center; white-space: nowrap; text-decoration: none; font-size: 0.875rem; font-weight: 500; color: var(--neutral-medium); height: 2.25rem; padding: 0 0.75rem; border-radius: 0.375rem; background-color: transparent; border: none; cursor: pointer; transition: all 0.2s; }
+            .bento-card .button:hover { background-color: rgba(39, 140, 130, 0.1); color: var(--primary-brand); }
+            
+    /* === SOCIAL PROOF / FLIP STATS SECTION (SOLID, HIGH-CONTRAST REFACTOR) === */
+
+    /* --- Main Section Container --- */
+    .social-proof-section { 
+        background-color:#32b3a6; /* A very light, clean gray background */
+        border-top: 1px solid #E5E7EB; 
+        border-bottom: 1px solid #E5E7EB;
+    }
+    .stats-section {
+        display: flex;
+        gap: 24px;
+        justify-content: center;
+        align-items: center;
+        padding: 100px 20px; /* Increased padding for more breathing room */
+        max-width: 1200px;
+        margin: 0 auto;
+        flex-wrap: wrap;
+    }
+
+    /* --- Flip Card Structure & Animation --- */
+    .flip-card {
+        background: none; /* Container is now truly transparent */
+        width: 240px;
+        height: 180px;
+        perspective: 1000px;
+        animation: fadeIn 0.5s ease-out backwards;
+    }
+    .flip-card:nth-child(1) { animation-delay: 0.1s; }
+    .flip-card:nth-child(2) { animation-delay: 0.15s; }
+    .flip-card:nth-child(3) { animation-delay: 0.2s; }
+    .flip-card:nth-child(4) { animation-delay: 0.25s; }
+
+    @keyframes fadeIn {
+        from { opacity: 0; transform: translateY(20px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+
+    .flip-card-inner {
+        position: relative;
+        width: 100%;
+        height: 100%;
+        transition: transform 0.7s cubic-bezier(0.45, 0, 0.55, 1); /* Smoother easing */
+        transform-style: preserve-3d;
+    }
+    .flip-card:hover .flip-card-inner {
+        transform: rotateY(180deg);
+    }
+
+    /* --- Card Faces (Front & Back) --- */
+    .flip-card-front, .flip-card-back {
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        border-radius: 16px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        backface-visibility: hidden;
+        padding: 24px 18px;
+        transition: box-shadow 0.3s ease, transform 0.3s ease;
+    }
+
+    /* --- Front Face: Solid & Clean --- */
+    .flip-card-front {
+        background: #FFFFFF; /* Solid white background */
+        border: 1px solid #E5E7EB; /* Subtle, solid border */
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05); /* Softer initial shadow */
+        z-index: 2;
+    }
+    .flip-card:hover .flip-card-front {
+        transform: translateY(-4px);
+        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1); /* More pronounced shadow on hover */
+    }
+
+    /* --- Back Face: Solid & Colorful --- */
+    .flip-card-back {
+        transform: rotateY(180deg);
+        /* Background color will be set per card */
+        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+        z-index: 1;
+        color: #FFFFFF; /* White text for high contrast on colored backgrounds */
+        font-size: 1.25rem;
+        font-weight: 600;
+        text-align: center;
+        line-height: 1.4;
+    }
+
+    /* --- Content Styling --- */
+    .stat-icon {
+        font-size: 48px;
+        margin-bottom: 10px;
+        transition: all 0.3s ease;
+    }
+    .flip-card:hover .stat-icon {
+        transform: scale(1.1);
+    }
+    .stat-value {
+        font-weight: 700;
+        font-size: 2.4rem;
+        color: #1D1D1D; /* Dark text for front card */
+        letter-spacing: -0.5px;
+        margin-bottom: 6px;
+        transition: all 0.3s ease;
+    }
+    .flip-card:hover .stat-value {
+        transform: scale(1.05);
+    }
+    .stat-label {
+        font-size: 0.95rem;
+        color: #6B7280; /* Slightly darker gray for better contrast on white */
+        font-weight: 600;
+        letter-spacing: 0.3px;
+        text-align: center;
+        line-height: 1.3;
+    }
+
+    /* --- Back Face Icon Styling --- */
+    .flip-icon {
+        font-size: 64px;
+        margin-bottom: 8px;
+        color: #FFFFFF; /* White icon for back card */
+        opacity: 0.8; /* Slightly transparent to not overpower text */
+    }
+
+    /* --- Per-Card Color Theming (The Core of the New Design) --- */
+    /* Card 1: Blue */
+    .flip-card:nth-child(1) .stat-icon { color: #278c82; }
+    .flip-card:nth-child(1) .flip-card-back { background-color: #007AFF; }
+
+    /* Card 2: Green */
+    .flip-card:nth-child(2) .stat-icon { color:  #278c82; }
+    .flip-card:nth-child(2) .flip-card-back { background-color: #34C759; }
+
+    /* Card 3: Purple */
+    .flip-card:nth-child(3) .stat-icon { color:  #278c82; }
+    .flip-card:nth-child(3) .flip-card-back { background-color: #AF52DE; }
+
+    /* Card 4: Orange */
+    .flip-card:nth-child(4) .stat-icon { color:  #278c82; }
+    .flip-card:nth-child(4) .flip-card-back { background-color: #FF9500; }
+
+    /* --- Responsive Adjustments (Unchanged, should work perfectly) --- */
+    @media (max-width: 1070px) { /* Slightly adjusted breakpoint */
+        .stats-section {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 24px;
+            padding: 80px 20px;
+        }
+        .flip-card {
+            width: 100%;
+        }
+    }
+    @media (max-width: 540px) {
+        .stats-section {
+            grid-template-columns: 1fr;
+            padding: 60px 20px;
+        }
+        .flip-card {
+            height: 170px;
+        }
+        .stat-icon {
+            font-size: 44px;
+        }
+        .stat-value {
+            font-size: 2.1rem;
+        }
+        .flip-icon {
+            font-size: 56px;
+        }
+    }        
+            .slider-section { background: var(--background); padding: 2rem 0; border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); }
+            .slider-container { max-width: 80rem; margin: 0 auto; padding: 0 1.5rem; }
+            .slider-wrapper { display: flex; align-items: center; gap: 1.5rem; }
+            .slider-label { font-size: 1.1rem; font-weight: 600; text-align: right; min-width: 15rem; padding-right: 1.5rem; border-right: 1px solid var(--border); color: var(--neutral-medium); font-family: 'Poppins', sans-serif; }
+            .slider-content { flex: 1; position: relative; overflow: hidden; padding: 1.5rem 0; }
+            .infinite-slider { display: flex; gap: 7rem; animation: slide 40s linear infinite; }
+            .infinite-slider:hover { animation-play-state: paused; }
+            .slider-item { display: flex; flex-shrink: 0; }
+            .slider-item img { height: 1.5rem; width: auto; filter: grayscale(1) opacity(0.6); transition: all 0.3s ease; }
+            .slider-item:hover img { filter: grayscale(0) opacity(1); }
+            @keyframes slide { 0% { transform: translateX(0); } 100% { transform: translateX(-50%); } }
+            .slider-blur-left, .slider-blur-right { position: absolute; top: 0; width: 5rem; height: 100%; pointer-events: none; z-index: 10; }
+            .slider-blur-left { left: 0; background: linear-gradient(to right, var(--background), transparent); }
+            .slider-blur-right { right: 0; background: linear-gradient(to left, var(--background), transparent); }
+            
+            /* === OUR WORLD SECTION === */
+            .our-world-section {
+                padding: 120px 0;
+                background-color: var(--neutral-white);
+                position: relative;
+                overflow-x: clip; /* prevent horizontal scroll on body */
+            }
+            .our-world-section .section-header h2 {
+                color: var(--accent-orange);
+            }
+            .glance-subtitle {
+                font-size: 1rem;
+                font-weight: 600;
+                color: var(--neutral-medium);
+                margin-bottom: 8px;
+                position: relative;
+                display: inline-block;
+                padding-right: 70px; /* Space for the line */
+            }
+            .glance-subtitle::after {
+                content: '';
+                position: absolute;
+                right: 0;
+                top: 50%;
+                transform: translateY(-50%);
+                width: 60px;
+                height: 3px;
+                background-color: var(--accent-orange);
+                border-radius: 2px;
+            }
+
+            .world-carousel-wrapper {
+                position: relative;
+                width: 100%;
+                max-width: 1300px;
+                margin: 0 auto;
+            }
+            .world-carousel {
+                display: flex;
+                gap: 30px;
+                overflow-x: auto;
+                scroll-behavior: smooth;
+                -ms-overflow-style: none; /* IE and Edge */
+                scrollbar-width: none; /* Firefox */
+                padding: 10px 0; /* Padding for hover effect */
+            }
+            .world-carousel::-webkit-scrollbar {
+                display: none; /* Chrome, Safari, and Opera */
+            }
+            .world-card {
+                flex: 0 0 280px; /* Fixed width for portrait ratio */
+                height: 498px;
+                border-radius: 16px;
+                overflow: hidden;
+                position: relative;
+                box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+                transition: var(--transition-smooth);
+                cursor: pointer;
+            }
+            .world-card:hover {
+                transform: translateY(-10px) scale(1.02);
+                box-shadow: 0 15px 40px rgba(0,0,0,0.15);
+            }
+            .world-card img {
+                width: 100%;
+                height: 100%;
+                object-fit: cover;
+                display: block;
+            }
+
+            .world-nav-arrow {
+                position: absolute;
+                top: 50%;
+                transform: translateY(-50%);
+                width: 50px;
+                height: 50px;
+                border-radius: 50%;
+                background-color: var(--primary-brand);
+                box-shadow: 0 4px 15px rgba(39, 140, 130, 0.3);
+                border: none;
+                cursor: pointer;
+                font-size: 2rem;
+                color: white;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                z-index: 10;
+                transition: var(--transition-smooth);
+            }
+            .world-nav-arrow:hover {
+                background-color: var(--accent-brand);
+                transform: translateY(-50%) scale(1.1);
+            }
+            .world-nav-left { left: -25px; }
+            .world-nav-right { right: -25px; }
+
+            .floating-socials {
+                position: absolute;
+                left: max(20px, calc((100vw - 1200px) / 2 - 60px));
+                top: 50%;
+                transform: translateY(-50%);
+                display: flex;
+                flex-direction: column;
+                gap: 15px;
+                z-index: 20;
+            }
+            .floating-socials .social-icon {
+                width: 45px;
+                height: 45px;
+                border-radius: 50%;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                color: white;
+                font-size: 1.2rem;
+                text-decoration: none;
+                box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+                transition: var(--transition-smooth);
+            }
+            .floating-socials .social-icon:hover { transform: scale(1.1); }
+            .floating-socials .social-icon.linkedin { background-color: #0077b5; }
+            .floating-socials .social-icon.phone { background-color: #d9534f; }
+            .floating-socials .social-icon.whatsapp { background-color: #25d366; }
+
+            /* === NEW PARTNERSHIP SECTION STYLES === */
+            .partner-section {
+                padding: 120px 0;
+                text-align: center;
+                width: 100%;
+                background-color: var(--neutral-light);
+                border-top: 1px solid var(--border);
+            }
+            .partner-section .section-title {
+                font-family: 'Playfair Display', serif;
+                font-size: 2.8rem;
+                font-weight: 700;
+                color: var(--neutral-dark);
+                margin-bottom: 4rem;
+            }
+            .logo-sliders-container {
+                display: flex;
+                flex-direction: column;
+                gap: 1.5rem; /* Space between the two rows */
+                max-width: 100%;
+                overflow: hidden;
+            }
+            @keyframes scroll-left {
+                0% { transform: translateX(0); }
+                100% { transform: translateX(calc(-220px * 7)); } /* card width+margin * num logos */
+            }
+            @keyframes scroll-right {
+                0% { transform: translateX(0); } /* Start from the original position */
+                100% { transform: translateX(calc(-220px * 7)); } /* Scroll to the end of the first set */
+            }
+            .logo-slider {
+                width: 100%;
+                overflow: hidden;
+                position: relative;
+            }
+            .logo-slider::before,
+            .logo-slider::after {
+                content: '';
+                position: absolute;
+                top: 0;
+                width: 150px;
+                height: 100%;
+                z-index: 2;
+            }
+            .logo-slider::before {
+                left: 0;
+                background: linear-gradient(to left, rgba(247, 250, 252, 0), var(--neutral-light));
+            }
+            .logo-slider::after {
+                right: 0;
+                background: linear-gradient(to right, rgba(247, 250, 252, 0), var(--neutral-light));
+            }
+            .logo-track {
+                display: flex;
+                width: calc(220px * 14); /* (card width + margin) * (num logos * 2) */
+            }
+            .track-left { 
+                animation: scroll-left 35s linear infinite; 
+            }
+            .track-right { 
+                /* Reverse direction for the right track */
+                animation: scroll-right 35s linear infinite reverse; 
+            }
+            .logo-slider:hover .logo-track { animation-play-state: paused; }
+            .logo-card {
+                background-color: #ffffff;
+                width: 200px;
+                height: 100px;
+                margin: 0 10px;
+                border-radius: 12px;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                flex-shrink: 0;
+                transition: transform 0.3s ease, box-shadow 0.3s ease;
+                box-shadow: var(--shadow-sm);
+                border: 1px solid var(--border);
+            }
+            .logo-card:hover {
+                transform: translateY(-5px);
+                box-shadow: var(--shadow-md);
+            }
+            .logo-card img {
+                max-width: 70%;
+                max-height: 50%;
+                object-fit: contain;
+                filter: grayscale(100%);
+                opacity: 0.6;
+                transition: filter 0.3s ease, opacity 0.3s ease;
+            }
+            .logo-card:hover img {
+                filter: grayscale(0%);
+                opacity: 1;
+            }
+            
+            /* === TESTIMONIAL SECTION (Color updated) === */
+            .testimonial-section {
+                padding: 120px 0;
+                background-color: #f0fafa; /* Soft cream background adjusted for new theme */
+            }
+            .testimonial-section .section-header h2 {
+                font-family: 'Poppins', sans-serif;
+                color: var(--neutral-dark);
+                font-size: 2.8rem;
+                font-weight: 700;
+            }
+            .testimonial-content {
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                gap: 5rem;
+                max-width: 1100px;
+                margin: 0 auto;
+            }
+            .testimonial-quote {
+                flex: 1 1 55%;
+            }
+            .testimonial-quote p {
+                font-size: 1.3rem;
+                font-weight: 500;
+                line-height: 1.7;
+                color: #333;
+                margin-bottom: 2rem;
+            }
+            
+            .testimonial-author .author-name {
+                font-weight: 700;
+                font-size: 1.1rem;
+                color: var(--neutral-dark);
+            }
+            .testimonial-author .author-title {
+                font-size: 1rem;
+                color: var(--neutral-medium);
+            }
+            .testimonial-logo-wrapper {
+                flex: 1 1 45%;
+                max-width: 400px;
+                background-color: #2F4846; /* Dark green from image */
+                border-radius: 20px;
+                padding: 3rem;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                box-shadow: 0 15px 30px rgba(0,0,0,0.1);
+            }
+            .testimonial-logo-wrapper img {
+                max-width: 100%;
+                height: auto;
+            }
+
+            /* === BLOG PREVIEW SECTION (Color updated) === */
+            .blog-preview-section {
+                padding: 120px 0;
+                background-color: var(--neutral-white);
+            }
+            .blog-preview-section .section-header {
+                text-align: left;
+                margin-bottom: 50px;
+            }
+            .blog-preview-section .section-header h2 {
+                font-family: 'Poppins', sans-serif;
+                color: var(--neutral-dark);
+                font-size: 2.8rem;
+                font-weight: 700;
+                line-height: 1.2;
+            }
+            .blog-grid {
+                display: grid;
+                grid-template-columns: repeat(3, 1fr);
+                gap: 30px;
+            }
+            .blog-card {
+                display: block;
+                text-decoration: none;
+                background-color: var(--neutral-white);
+                border-radius: 12px;
+                box-shadow: var(--shadow-sm);
+                overflow: hidden;
+                transition: var(--transition-smooth);
+            }
+            .blog-card:hover {
+                transform: translateY(-8px);
+                box-shadow: var(--shadow-md);
+            }
+            .blog-card-image {
+                aspect-ratio: 16 / 10;
+                overflow: hidden;
+            }
+            .blog-card-image img {
+                width: 100%;
+                height: 100%;
+                object-fit: cover;
+                transition: transform 0.4s ease;
+            }
+            .blog-card:hover .blog-card-image img {
+                transform: scale(1.05);
+            }
+            .blog-card-content {
+                padding: 20px 25px 25px;
+            }
+            .blog-card-content h3 {
+                font-size: 1.1rem;
+                font-weight: 600;
+                color: var(--neutral-dark);
+                line-height: 1.5;
+                margin-bottom: 15px;
+                min-height: 4.5em; /* Reserve space for 3 lines of text */
+            }
+            .read-more {
+                font-size: 0.9rem;
+                font-weight: 600;
+                color: var(--primary-brand);
+                display: inline-block;
+                transition: transform 0.3s ease;
+            }
+            .blog-card:hover .read-more {
+                transform: translateX(5px);
+            }
+
+            /* === CUSTOMER TRUST SECTION === */
+            .customer-trust-section {
+                padding: 120px 0;
+                background-color: var(--neutral-light);
+            }
+            .trust-layout {
+                display: flex;
+                align-items: center;
+                gap: 60px;
+            }
+            .trust-logos {
+                flex: 2;
+                display: grid;
+                grid-template-columns: repeat(4, 1fr);
+                gap: 20px;
+            }
+            .trust-logo-item {
+                background: var(--neutral-white);
+                border-radius: 12px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                height: 90px;
+                padding: 15px;
+                box-shadow: var(--shadow-sm);
+                transition: var(--transition-smooth);
+            }
+            .trust-logo-item:hover {
+                transform: translateY(-5px);
+                box-shadow: var(--shadow-md);
+            }
+            .trust-logo-item img {
+                max-width: 110px;
+                max-height: 45px;
+                object-fit: contain;
+                filter: grayscale(100%);
+                opacity: 0.7;
+                transition: var(--transition-smooth);
+            }
+            .trust-logo-item:hover img {
+                filter: grayscale(0%);
+                opacity: 1;
+            }
+            .trust-cta {
+                flex: 1;
+                text-align: left;
+            }
+            .trust-title {
+                font-family: 'Playfair Display', serif;
+                font-size: 2.8rem;
+                color: var(--neutral-dark);
+                line-height: 1.3;
+                margin-bottom: 25px;
+                font-weight: 900;
+            }
+
+            /* === FINAL CTA SECTION (Color updated) === */
+            .final-cta-section {
+                padding: 0 0 120px 0;
+            }
+            .cta-banner {
+                background-color: var(--primary-brand);
+                border-radius: 24px;
+                position: relative;
+                overflow: hidden;
+                display: flex;
+                align-items: center;
+                min-height: 400px;
+            }
+            .cta-background-pattern {
+                position: absolute;
+                right: -50px;
+                bottom: -80px;
+                opacity: 0.1;
+                pointer-events: none;
+                z-index: 1;
+            }
+            .cta-background-pattern svg {
+                width: 450px;
+                height: auto;
+            }
+            .cta-image-wrapper {
+                position: absolute;
+                left: 40px;
+                bottom: 0;
+                width: 420px;
+                height: auto;
+                z-index: 2;
+            }
+            .cta-image-wrapper img {
+                width: 100%;
+                height: auto;
+                display: block;
+            }
+            .cta-content {
+                color: var(--neutral-white);
+                position: relative;
+                z-index: 3;
+                padding: 60px;
+                margin-left: 45%;
+                max-width: 55%;
+            }
+            .cta-content h2 {
+                font-size: 3.2rem;
+                font-weight: 700;
+                line-height: 1.2;
+                margin-bottom: 20px;
+            }
+            .cta-content p {
+                font-size: 1.1rem;
+                opacity: 0.9;
+                margin-bottom: 30px;
+            }
+            .btn-yellow {
+                background-color: #facc15;
+                color: var(--neutral-dark);
+                box-shadow: 0 8px 20px rgba(250, 204, 21, 0.2);
+            }
+            .btn-yellow:hover {
+                background-color: #eab308;
+                color: var(--neutral-dark);
+                box-shadow: 0 12px 25px rgba(234, 179, 8, 0.3);
+            }
+                        
+            .our-members-section { padding: 100px 0; background-color: var(--neutral-light); border-top: 1px solid #e2e8f0; border-bottom: 1px solid #e2e8f0; }
+            .our-members-section > .container { display: flex; align-items: center; gap: 60px; }
+            .section-title { flex-basis: 35%; text-align: left; margin: 0; }
+            .section-title h3 { font-family: 'Playfair Display', serif; font-size: 2.8rem; color: var(--neutral-dark); margin-bottom: 15px; }
+            .section-title p { font-size: 1.1rem; color: var(--neutral-medium); line-height: 1.7; }
+            @keyframes scroll { from { transform: translateX(0); } to { transform: translateX(calc(-230px * 10)); } }
+            .logo-scroller { flex-basis: 65%; overflow: hidden; position: relative; -webkit-mask-image: linear-gradient(to right, transparent, white 20%, white 80%, transparent); mask-image: linear-gradient(to right, transparent, white 20%, white 80%, transparent); }
+            .logo-scroller-track { display: flex; width: calc(230px * 20); animation: scroll 40s linear infinite; }
+            .logo-scroller:hover .logo-scroller-track { animation-play-state: paused; }
+            .member-logo-item { display: flex; justify-content: center; align-items: center; width: 200px; height: 100px; padding: 15px; background-color: var(--neutral-white); border-radius: 12px; margin: 0 15px; transition: var(--transition-smooth); box-shadow: var(--shadow-sm); flex-shrink: 0; }
+            .member-logo-item:hover { transform: translateY(-5px); box-shadow: var(--shadow-md); }
+            .member-logo-item img { max-width: 100%; max-height: 60px; object-fit: contain; filter: grayscale(100%) opacity(0.65); transition: var(--transition-smooth); }
+            .member-logo-item:hover img { filter: grayscale(0%) opacity(1); }
+            .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(26, 26, 26, 0.75); backdrop-filter: blur(8px); z-index: 1000; display: none; align-items: center; justify-content: center; opacity: 0; transition: opacity 0.3s ease; }
+            .modal-overlay.active { display: flex; opacity: 1; }
+            .modal-content { background: var(--neutral-white); padding: 50px; border-radius: 24px; box-shadow: var(--shadow-xl); width: 90%; max-width: 550px; position: relative; transform: scale(0.95); transition: transform 0.3s ease; }
+            .modal-overlay.active .modal-content { transform: scale(1); }
+            .modal-close-btn { position: absolute; top: 20px; right: 25px; font-size: 2rem; color: var(--neutral-medium); cursor: pointer; line-height: 1; transition: var(--transition-smooth); width: 35px; height: 35px; display: flex; align-items: center; justify-content: center; border-radius: 50%; background: none; border: none; }
+            .modal-close-btn:hover { color: var(--primary-brand); background: var(--neutral-light); transform: rotate(90deg); }
+            .modal-content h3 { font-family: 'Playfair Display', serif; font-size: 2.2rem; color: var(--neutral-dark); margin-bottom: 30px; text-align: center; font-weight: 900; }
+            .form-group { margin-bottom: 25px; }
+            .form-group label { display: block; margin-bottom: 10px; font-weight: 600; color: var(--neutral-dark); font-size: 0.95rem; }
+            .form-group input, .form-group textarea { width: 100%; padding: 15px 18px; border: 2px solid #E2E8F0; border-radius: 12px; font-family: 'Poppins', sans-serif; font-size: 1rem; transition: var(--transition-smooth); background-color: var(--neutral-light); }
+            .form-group input:focus, .form-group textarea:focus { outline: none; border-color: var(--primary-brand); box-shadow: 0 0 0 4px rgba(39, 140, 130, 0.1); background-color: var(--neutral-white); }
+            .form-group textarea { resize: vertical; min-height: 140px; }
+            
+            /* === NEW SERVICES SECTION (Color updated) === */
+            .new-services-section {
+                padding: 120px 0;
+                background: var(--neutral-white);
+                overflow-x: clip;
+            }
+            .services-grid {
+                display: grid;
+                grid-template-columns: 350px 1fr;
+                gap: 60px;
+                align-items: center;
+            }
+            .services-text-content .services-subtitle {
+                font-size: 1rem;
+                font-weight: 600;
+                color: var(--accent-orange);
+                margin-bottom: 8px;
+                position: relative;
+                display: inline-block;
+                padding-right: 70px;
+            }
+            .services-text-content .services-subtitle::after {
+                content: '';
+                position: absolute;
+                right: 0;
+                top: 50%;
+                transform: translateY(-50%);
+                width: 60px;
+                height: 3px;
+                background-color: var(--accent-orange);
+                border-radius: 2px;
+            }
+            .services-text-content h2 {
+                font-family: 'Poppins', sans-serif;
+                font-size: 3rem;
+                font-weight: 700;
+                color: var(--neutral-dark);
+                margin-bottom: 20px;
+            }
+            .services-text-content p {
+                font-size: 1rem;
+                color: var(--neutral-medium);
+                line-height: 1.8;
+                margin-bottom: 30px;
+            }
+            .services-cta-block {
+                display: flex;
+                align-items: center;
+                gap: 20px;
+            }
+            .services-socials {
+                display: flex;
+                gap: 10px;
+            }
+            .social-icon-sm {
+                width: 45px;
+                height: 45px;
+                border-radius: 50%;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                color: white;
+                font-size: 1.2rem;
+                text-decoration: none;
+                box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+                transition: var(--transition-smooth);
+            }
+            .social-icon-sm:hover { transform: scale(1.1); }
+            .social-icon-sm.linkedin-sm { background-color: #0077b5; }
+            .social-icon-sm.phone-sm { background-color: #d9534f; }
+            .services-carousel-wrapper {
+                position: relative;
+            }
+            .services-carousel {
+                display: flex;
+                gap: 20px;
+                overflow-x: auto;
+                scroll-behavior: smooth;
+                -ms-overflow-style: none;
+                scrollbar-width: none;
+                padding: 10px 0;
+                margin: -10px 0;
+            }
+            .services-carousel::-webkit-scrollbar { display: none; }
+            .service-card {
+                flex: 0 0 300px;
+                height: 450px;
+                border-radius: 20px;
+                overflow: hidden;
+                position: relative;
+                color: white;
+                transition: var(--transition-smooth);
+                box-shadow: var(--shadow-sm);
+            }
+            .service-card:hover { transform: translateY(-5px) scale(1.02); box-shadow: var(--shadow-lg); }
+            .service-card img {
+                width: 100%;
+                height: 100%;
+                object-fit: cover;
+                transition: transform 0.5s ease;
+            }
+            .service-card:hover img { transform: scale(1.1); }
+            .service-card-overlay {
+                position: absolute;
+                inset: 0;
+                background: linear-gradient(to top, rgba(0,0,0,0.7) 0%, rgba(0,0,0,0.3) 40%, transparent 70%);
+            }
+            .service-card-number {
+                position: absolute;
+                top: 20px;
+                right: 25px;
+                font-size: 1.8rem;
+                font-weight: 700;
+                opacity: 0.8;
+                text-shadow: 0 2px 5px rgba(0,0,0,0.3);
+            }
+            .service-card-content {
+                position: absolute;
+                bottom: 25px;
+                left: 25px;
+                right: 25px;
+                display: flex;
+                justify-content: space-between;
+                align-items: flex-end;
+            }
+            .service-card-content h3 {
+                font-size: 1.5rem;
+                font-weight: 600;
+                max-width: 70%;
+                line-height: 1.3;
+            }
+            .service-arrow-btn {
+                width: 50px;
+                height: 50px;
+                background: rgba(255,255,255,0.2);
+                border: 1px solid rgba(255,255,255,0.3);
+                border-radius: 50%;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                text-decoration: none;
+                color: white;
+                font-size: 1.2rem;
+                transition: var(--transition-smooth);
+                flex-shrink: 0;
+                backdrop-filter: blur(5px);
+            }
+            .service-arrow-btn:hover {
+                background: rgba(255,255,255,0.4);
+                transform: scale(1.1);
+            }
+            .service-nav-arrow {
+                position: absolute;
+                top: 50%;
+                transform: translateY(-50%);
+                width: 45px;
+                height: 45px;
+                background-color: var(--primary-brand);
+                border-radius: 8px;
+                border: none;
+                cursor: pointer;
+                font-size: 1.8rem;
+                color: white;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                z-index: 10;
+                transition: var(--transition-smooth);
+            }
+            .service-nav-arrow:hover {
+                background-color: var(--accent-brand);
+            }
+            .service-nav-left { left: -25px; }
+            .service-nav-right { right: 25px; }
+
+            /* "STICKY SCROLLING" PROCESS SECTION */
+            .process-section-sticky { 
+                padding: 100px 20px; 
+                background-color: var(--neutral-light); /* Restored alternating bg */
+                color: var(--neutral-dark);
+            }
+            .process-sticky-container { 
+                max-width: 1200px; 
+                margin: 0 auto; 
+                display: grid; 
+                grid-template-columns: 1fr 1fr; 
+                gap: 5%; 
+            }
+            .process-visuals { 
+                position: sticky; 
+                top: 20vh; 
+                height: 60vh; 
+                border-radius: 20px; 
+                overflow: hidden; 
+                box-shadow: 0 15px 40px rgba(0,0,0,0.1); 
+            }
+            .process-visuals img { 
+                position: absolute; 
+                top: 0; 
+                left: 0; 
+                width: 100%; 
+                height: 100%; 
+                object-fit: cover; 
+                opacity: 0; 
+                transform: scale(1.05); 
+                transition: opacity 0.6s ease, transform 0.6s ease; 
+            }
+            .process-visuals img.active { 
+                opacity: 1; 
+                transform: scale(1); 
+            }
+            .process-steps { 
+                display: flex; 
+                flex-direction: column; 
+            }
+            .step-text-block { 
+                min-height: 70vh; 
+                display: flex; 
+                flex-direction: column; 
+                justify-content: center; 
+                opacity: 0.4; 
+                transition: opacity 0.4s ease; 
+            }
+            .step-text-block.active { 
+                opacity: 1; 
+            }
+            .step-text-block i { 
+                font-size: 2.8rem; 
+                color: var(--accent-orange); 
+                margin-bottom: 25px; 
+            }
+            .step-text-block h3 { 
+                font-size: 2.2rem; 
+                font-weight: 700; 
+                margin: 0 0 15px 0; 
+            }
+            .step-text-block p { 
+                font-size: 1.15rem; 
+                line-height: 1.7; 
+                color: var(--muted-foreground); 
+                margin: 0; 
+            }
+
+            /* === STICKY REVEAL FOOTER === */
+            .site-footer {
+                background-color: var(--dark-brand);
+                color: var(--neutral-light);
+                padding: 80px 0 0;
+                position: sticky;
+                bottom: 0;
+                z-index: 5; /* Lower z-index than main content */
+            }
+            .footer-grid {
+                display: grid;
+                grid-template-columns: repeat(4, 1fr);
+                gap: 40px;
+                padding-bottom: 60px;
+            }
+            .footer-column .footer-logo {
+                height: 50px;
+                margin-bottom: 20px;
+            }
+            .footer-column p {
+                color: #a0aec0;
+                font-size: 0.95rem;
+                max-width: 300px;
+            }
+            .footer-column h4 {
+                font-size: 1.2rem;
+                font-weight: 600;
+                margin-bottom: 20px;
+                color: var(--neutral-white);
+            }
+            .footer-links {
+                list-style: none;
+                padding: 0;
+                margin: 0;
+                display: flex;
+                flex-direction: column;
+                gap: 12px;
+            }
+            .footer-links a {
+                color: #a0aec0;
+                text-decoration: none;
+                transition: color 0.3s ease;
+            }
+            .footer-links a:hover {
+                color: var(--primary-brand);
+            }
+            .footer-contact-info {
+                list-style: none;
+                padding: 0;
+                margin: 0;
+                display: flex;
+                flex-direction: column;
+                gap: 15px;
+                color: #a0aec0;
+            }
+            .footer-contact-info li {
+                display: flex;
+                align-items: flex-start;
+                gap: 10px;
+            }
+            .footer-contact-info i {
+                margin-top: 4px;
+                color: var(--primary-brand);
+            }
+            .footer-bottom-bar {
+                border-top: 1px solid #2d3748;
+                padding: 25px 0;
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                font-size: 0.9rem;
+                color: #718096;
+            }
+            .footer-socials {
+                display: flex;
+                gap: 15px;
+            }
+            .footer-socials a {
+                color: #a0aec0;
+                font-size: 1.2rem;
+                transition: color 0.3s ease, transform 0.3s ease;
+            }
+            .footer-socials a:hover {
+                color: var(--primary-brand);
+                transform: scale(1.1);
+            }
+
+            /* === RESPONSIVE STYLES === */
+            @media (max-width: 1400px) {
+                .floating-socials { left: 20px; }
+            }
+            @media (max-width: 1200px) {
+                .visionaries-banner {
+                    flex-direction: column;
+                    text-align: center;
+                    padding: 40px;
+                }
+                .visionaries-title-wrapper {
+                    margin-bottom: 40px;
+                }
+                .visionaries-title-wrapper h2 {
+                    max-width: none;
+                }
+                .visionary-corner-icon {
+                    display: none;
+                }
+                .visionaries-items {
+                    justify-content: center;
+                    flex-wrap: wrap;
+                    width: 100%;
+                    gap: 30px;
+                }
+                .trust-layout {
+                    flex-direction: column-reverse;
+                    text-align: center;
+                }
+                .trust-cta {
+                    margin-bottom: 50px;
+                }
+            }
+            @media (max-width: 992px) { 
+                .nav-links { display: none; } .main-nav { justify-content: center; } .hero-layout { flex-direction: column; text-align: center; padding-top: 100px; } .hero-content { order: 2; margin-top: 40px; display: flex; flex-direction: column; align-items: center;} .hero-product { order: 1; width: 80%; max-width: 500px; } .hero-headline { font-size: 3rem; }
+                .info-card { flex-direction: column; } .card-image { min-height: 300px; flex-basis: auto; height: 300px; } .card-body { padding: 40px 30px; } .our-members-section > .container { flex-direction: column; } .section-title { text-align: center; margin-bottom: 50px; } .section-header h2 {font-size: 2.8rem;}
+                .world-carousel-wrapper { padding: 0; }
+                .world-carousel { padding: 0 5%; }
+                .world-nav-arrow { display: none; }
+                .floating-socials { display: none; }
+                .testimonial-content { flex-direction: column; gap: 3rem; }
+                .testimonial-quote { text-align: center; }
+                .testimonial-quote p { font-size: 1.15rem; }
+                .testimonial-logo-wrapper { max-width: 350px; width: 100%; }
+                .blog-grid {
+                    grid-template-columns: repeat(2, 1fr);
+                }
+                .services-grid { grid-template-columns: 1fr; text-align: center; }
+                .services-text-content .services-subtitle { display: block; padding-right: 0; }
+                .services-text-content .services-subtitle::after { display: none; }
+                .services-cta-block { justify-content: center; }
+                .service-nav-arrow { display: none; }
+                .process-sticky-container { grid-template-columns: 1fr; }
+                .process-visuals { display: none; } /* Hide sticky image on mobile for simpler layout */
+                .step-text-block { min-height: auto; padding: 40px 0; text-align: center; opacity: 1;}
+                .hero-icon-services { 
+                    max-width: 100%;
+                    justify-content: flex-start;
+                    overflow-x: auto;
+                    padding-bottom: 15px; /* space for potential scrollbar */
+                    -ms-overflow-style: none;
+                    scrollbar-width: none;
+                }
+                .hero-icon-services::-webkit-scrollbar { display: none; }
+                .footer-grid {
+                    grid-template-columns: repeat(2, 1fr);
+                    gap: 50px;
+                }
+            }
+            @media (max-width: 768px) { 
+                .hero-section { height: auto; padding-bottom: 80px; } .hero-layout { padding-top: 120px; } .hero-headline { font-size: 2.5rem; } .card-header-row { flex-direction: column; align-items: flex-start; gap: 15px; } .card-header-row h2 { font-size: 2.5rem; } .modal-content { padding: 35px; } .our-members-section, .bento-section, .customer-trust-section, .our-world-section, .testimonial-section, .blog-preview-section, .new-services-section, .process-section-sticky, .partner-section { padding: 80px 0; } .trust-layout { margin-bottom: 80px; } .trust-logos { grid-template-columns: repeat(3, 1fr); } .trust-title { font-size: 2.2rem; } .stats-container { flex-wrap: wrap; } .stat-box { flex-basis: 50%; border-right: none; margin-bottom: 20px; } .section-title h3 { font-size: 2.2rem; } .section-header h2, .testimonial-section .section-header h2, .blog-preview-section .section-header h2, .services-text-content h2, .partner-section .section-title { font-size: 2.5rem; } .slider-wrapper { flex-direction: column; } .slider-label { border-right: none; border-bottom: 1px solid var(--border); padding-right: 0; padding-bottom: 1rem; text-align: center; width: 100%; }
+                .visionaries-banner { margin: -20px auto 40px; }
+                .visionaries-title-wrapper h2 { font-size: 2rem; }
+                .visionaries-items { gap: 15px; }
+                .visionary-item { width: calc(50% - 15px); }
+                .visionary-icon-bg { width: 70px; height: 70px; }
+                .visionary-icon-bg svg { width: 35px; height: 35px; }
+                .glance-subtitle { display: block; text-align: center; padding-right: 0; }
+                .glance-subtitle::after { display: none; }
+                .world-card { flex: 0 0 240px; height: 427px; }
+                .blog-grid {
+                    grid-template-columns: 1fr;
+                }
+                .blog-preview-section .section-header {
+                    text-align: center;
+                }
+                .footer-bottom-bar {
+                    flex-direction: column;
+                    gap: 20px;
+                    text-align: center;
+                }
+
+                /* Responsive Partnership Section */
+                .logo-slider::before, .logo-slider::after { width: 50px; }
+                .logo-card { width: 160px; height: 80px; }
+                .logo-track { width: calc(180px * 14); }
+                @keyframes scroll-left {
+                    0% { transform: translateX(0); }
+                    100% { transform: translateX(calc(-180px * 7)); }
+                }
+                @keyframes scroll-right {
+                    0% { transform: translateX(0); }
+                    100% { transform: translateX(calc(-180px * 7)); }
+                }
+            }
+            @media (max-width: 576px) {
+                .trust-logos {
+                    grid-template-columns: repeat(2, 1fr);
+                    gap: 15px;
+                }
+                .footer-grid {
+                    grid-template-columns: 1fr;
+                    text-align: center;
+                }
+                .footer-column p {
+                    margin-left: auto;
+                    margin-right: auto;
+                }
+                .footer-contact-info li {
+                    justify-content: center;
+                }
+                
+                /* Responsive Partnership Section for small devices */
+                .logo-card { width: 130px; height: 70px; }
+                .logo-track { width: calc(150px * 14); }
+                @keyframes scroll-left {
+                    0% { transform: translateX(0); }
+                    100% { transform: translateX(calc(-150px * 7)); }
+                }
+                @keyframes scroll-right {
+                    0% { transform: translateX(0); }
+                    100% { transform: translateX(calc(-150px * 7)); }
+                }
+            }
+            @media (max-width: 480px) { .hero-headline { font-size: 2.2rem; } .btn { padding: 15px 30px; font-size: 0.95rem; } .modal-content h3 { font-size: 1.8rem; } .stat-box { flex-basis: 100%; }
+                .visionary-item { width: calc(50% - 10px); }
+                .visionary-item p { font-size: 0.85rem; }
+            }
+            @media (prefers-reduced-motion: reduce) { * { animation-duration: 0.01ms !important; animation-iteration-count: 1 !important; transition-duration: 0.01ms !important; scroll-behavior: auto !important; } }
+        </style>
+    </head>
+    <body>
+        
+        <!-- LOADING SCREEN -->
+        <div id="loading-container">
+            <canvas id="vapour-canvas"></canvas>
+            <h1 id="seo-text" class="seo-hidden">Food Maveriks</h1>
+        </div>
+
+        <!-- MAIN WEBSITE CONTENT -->
+        <div id="main-content-wrapper">
+            
+            <header class="hero-section">
+                <nav class="main-nav">
+                    <div class="nav-logo">
+                        <a href="/">
+                            <img src="https://i.imgur.com/7Z4N2rF.png" alt="Food Maveriks Logo">
+                        </a>
+                    </div>
+                    <ul class="nav-links">
+                        <li><a href="#">Services</a></li>
+                        <li><a href="#">About Us</a></li>
+                        <li><a href="#">Blog</a></li>
+                        <li><a href="#">Contact</a></li>
+                    </ul>
+                </nav>
+                <div class="hero-layout">
+                    <div class="hero-content">
+                        <h1 class="hero-headline">Beverage Recipe<br>Formulation</h1>
+                        <p class="hero-paragraph">
+                            At Food Maveriks, we specialize in beverage recipe formulation, crafting drinks with the perfect taste, texture, and quality. Whether you're developing a health drink, energy beverage, or a unique formulation, we ensure your product stands out.
+                        </p>
+                        <button type="button" class="btn js-open-modal">Get Free Consultation</button>
+                        
+                        <!-- HERO ICON SERVICES (Redesigned) -->
+                        <div class="hero-icon-services">
+                            <div class="service-item">
+                                <i class="fas fa-flask-vial"></i>
+                                <span>Formulation</span>
+                            </div>
+                            <div class="service-item">
+                                <i class="fas fa-chart-line"></i>
+                                <span>Pilot & Scale Up</span>
+                            </div>
+                            <div class="service-item">
+                                <i class="fas fa-certificate"></i>
+                                <span>FSSAI & Claims</span>
+                            </div>
+                            <div class="service-item">
+                                <i class="fas fa-calendar-days"></i>
+                                <span>Shelf-Life</span>
+                            </div>
+                            <div class="service-item">
+                                <i class="fas fa-industry"></i>
+                                <span>Factory Setup</span>
+                            </div>
+                            <div class="service-item">
+                                <i class="fas fa-handshake"></i>
+                                <span>Contract Manufacturing</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="hero-product" id="hero-product-container">
+                        <img src="Frame-4521.webp" alt="Beverage cans" id="hero-product-img">
+                    </div>
+                </div>
+            </header>
+            
+            <main>
+                <section class="card-section">
+                    <div class="container">
+                        <div class="info-card">
+                            <div class="card-image" id="card-image-container">
+                                <img src="Frame-4521.webp" alt="Feature image">
+                            </div>
+                            <div class="card-body">
+                                <div class="card-header-row">
+                                    <h2>What We Do?</h2>
+                                    <a href="#" class="btn btn-black js-open-modal">Schedule Meeting</a>
+                                </div>
+                                <p>
+                                    Food Maveriks is more than a consultant—it’s a partner for food and beverage innovation. We don't follow trends, we create them. We do everything, from recipe formulation and nutritional engineering to R&D testing and manufacturing. As we have a unique mix of science, creativity, and knowledge of the market, we do it all.
+                                </p>
+                                <p>
+                                    We will take your ideas and do our best within the lab to take them to the next level, products that scale and sell. We support projects and do not charge for concepts. With Food Maveriks, your brand doesn't just enter the market; it stands out.
+                                </p>
+                                <p>
+                                    <strong>Food Maveriks: Where food vision becomes market reality.</strong>
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+                
+                <section class="visionaries-section">
+                    <div class="container">
+                        <div class="visionaries-banner">
+                            <div class="visionaries-title-wrapper">
+                                <svg class="visionary-corner-icon" width="32" height="32" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M20 4H8V16" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                                <h2>Tailored solutions for visionaries</h2>
+                            </div>
+                            <div class="visionaries-items">
+                                <div class="visionary-item">
+                                    <div class="visionary-icon-bg">
+                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                                            <path d="M12 5.5l1.5 3 3 1.5 -3 1.5 -1.5 3 -1.5 -3 -3 -1.5 3 -1.5 1.5 -3z"/>
+                                            <path d="M4.2 20.8c0-1.7 1.3-3 3-3h9.6c1.7 0 3-1.3 3-3V13"/>
+                                            <path d="M4.2 20.8V16h2.8l1-3h6.8l1 3H19.8v4.8"/>
+                                            <path d="M18 4l.5 1 1 .5 -1 .5 -.5 1 -.5-1 -1-.5 1-.5 .5-1z"/>
+                                            <path d="M6 8l.5 1 1 .5 -1 .5 -.5 1 -.5-1 -1-.5 1-.5 .5-1z"/>
+                                        </svg>
+                                    </div>
+                                    <p>Aspiring<br>Food Entrepreneurs</p>
+                                </div>
+                                <div class="visionary-item">
+                                    <div class="visionary-icon-bg">
+                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                                            <path d="M3 21h18"/>
+                                            <path d="M4 21V7l-2-4h20l-2 4v14"/>
+                                            <path d="M4 11h16"/>
+                                            <path d="M9 21v-4a3 3 0 0 1 6 0v4"/>
+                                        </svg>
+                                    </div>
+                                    <p>Emerging<br>Food Startups</p>
+                                </div>
+                                <div class="visionary-item">
+                                    <div class="visionary-icon-bg">
+                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                                            <path d="M14.5 9.5L21 3m0 0h-6m6 0v6M3 21l6.5-6.5M3 21v-6m0 6h6"/>
+                                            <path d="M21 21l-6.5-6.5M21 21h-6m6 0v-6M3 3l6.5 6.5M3 3h6M3 3v6"/>
+                                        </svg>
+                                    </div>
+                                    <p>Scaling Up<br>Food Businesses</p>
+                                </div>
+                                <div class="visionary-item">
+                                    <div class="visionary-icon-bg">
+                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                                            <circle cx="12" cy="12" r="10"/>
+                                            <circle cx="12" cy="12" r="6"/>
+                                            <path d="M12 2v2M12 20v2M2 12h2M20 12h2M5 5l2 2M17 17l2 2M5 19l2-2M17 7l2-2"/>
+                                        </svg>
+                                    </div>
+                                    <p>Established<br>Brands</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- "STICKY SCROLLING" PROCESS SECTION -->
+                <section class="process-section-sticky" id="process">
+                    <div class="container">
+                        <div class="section-header">
+                            <h2 style="color: var(--accent-orange);">Our Process</h2>
+                            <p>We've refined our approach into a seamless four-step process, ensuring your vision is meticulously crafted from a simple idea into a market-ready reality.</p>
+                        </div>
+                        <div class="process-sticky-container">
+                            <div class="process-visuals">
+                                <img src="https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?w=800" alt="Team brainstorming with sticky notes" id="step-1-img" class="active">
+                                <img src="https://images.unsplash.com/photo-1600734734893-f0a151b73e53?w=800" alt="Various spices in bowls" id="step-2-img">
+                                <img src="https://images.unsplash.com/photo-1574974631293-1901a45dba64?w=800" alt="Scientists collaborating in a lab" id="step-3-img">
+                                <img src="https://images.unsplash.com/photo-1579532582937-16c141df3081?w=800" alt="Products on a production line" id="step-4-img">
+                            </div>
+                            <div class="process-steps">
+                                <div class="step-text-block" data-image-target="step-1-img">
+                                    <i class="fas fa-lightbulb"></i><h3>1. Idea & Research</h3><p>We start by exploring your concept, researching market trends, and defining a clear path for innovation and success.</p>
+                                </div>
+                                <div class="step-text-block" data-image-target="step-2-img">
+                                    <i class="fas fa-tasks"></i><h3>2. Ingredient Selection</h3><p>Our experts source the highest quality ingredients, focusing on taste, stability, and clean-label requirements.</p>
+                                </div>
+                                <div class="step-text-block" data-image-target="step-3-img">
+                                    <i class="fas fa-cogs"></i><h3>3. Formulation & Testing</h3><p>In our state-of-the-art lab, we meticulously craft and refine your product's formula through rigorous trial and testing cycles.</p>
+                                </div>
+                                <div class="step-text-block" data-image-target="step-4-img">
+                                    <i class="fas fa-box-open"></i><h3>4. Scale-Up & Launch</h3><p>We transition from a lab-scale recipe to full-scale manufacturing, ensuring a smooth market entry for your final product.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+                
+                <section class="social-proof-section">
+                    <div class="stats-section">
+                    <div class="flip-card">
+                        <div class="flip-card-inner">
+                        <div class="flip-card-front">
+                            <span class="stat-icon material-icons">groups</span>
+                            <div class="stat-value" data-target="50">0</div>
+                            <div class="stat-label">Team</div>
+                        </div>
+                        <div class="flip-card-back">
+                            <span class="flip-icon material-icons">groups</span>
+                            Strong Team!
+                        </div>
+                        </div>
+                    </div>
+                    <div class="flip-card">
+                        <div class="flip-card-inner">
+                        <div class="flip-card-front">
+                            <span class="stat-icon material-icons">science</span>
+                            <div class="stat-value" data-target="250">0</div>
+                            <div class="stat-label">Projects Completed</div>
+                        </div>
+                        <div class="flip-card-back">
+                            <span class="flip-icon material-icons">science</span>
+                            We Love Research!
+                        </div>
+                        </div>
+                    </div>
+                    <div class="flip-card">
+                        <div class="flip-card-inner">
+                        <div class="flip-card-front">
+                            <span class="stat-icon material-icons">spa</span>
+                            <div class="stat-value" data-target="30">0</div>
+                            <div class="stat-label">Functional Food Products</div>
+                        </div>
+                        <div class="flip-card-back">
+                            <span class="flip-icon material-icons">spa</span>
+                            Healthy Products!
+                        </div>
+                        </div>
+                    </div>
+                    <div class="flip-card">
+                        <div class="flip-card-inner">
+                        <div class="flip-card-front">
+                            <span class="stat-icon material-icons">mood</span>
+                            <div class="stat-value" data-target="100">0</div>
+                            <div class="stat-label">Client Satisfaction</div>
+                        </div>
+                        <div class="flip-card-back">
+                            <span class="flip-icon material-icons">mood</span>
+                            Smiles Guaranteed!
+                        </div>
+                        </div>
+                    </div>
+                    </div>
+                </section>
+                
+                <section class="slider-section">
+                    <div class="slider-container">
+                        <div class="slider-wrapper">
+                            <div class="slider-label">
+                                <p>Powering the best teams</p>
+                            </div>
+                            <div class="slider-content">
+                                <div class="infinite-slider" id="infiniteSlider">
+                                    <!-- Duplicated items are intentional for the infinite scroll effect -->
+                                    <div class="slider-item"><img src="https://html.tailus.io/blocks/customers/nvidia.svg" alt="Nvidia Logo"></div>
+                                    <div class="slider-item"><img src="https://html.tailus.io/blocks/customers/column.svg" alt="Column Logo"></div>
+                                    <div class="slider-item"><img src="https://html.tailus.io/blocks/customers/github.svg" alt="GitHub Logo"></div>
+                                    <div class="slider-item"><img src="https://html.tailus.io/blocks/customers/nike.svg" alt="Nike Logo"></div>
+                                    <div class="slider-item"><img src="https://html.tailus.io/blocks/customers/lemonsqueezy.svg" alt="Lemon Squeezy Logo"></div>
+                                    <div class="slider-item"><img src="https://html.tailus.io/blocks/customers/laravel.svg" alt="Laravel Logo"></div>
+                                    <div class="slider-item"><img src="https://html.tailus.io/blocks/customers/openai.svg" alt="OpenAI Logo"></div>
+                                    <div class="slider-item"><img src="https://html.tailus.io/blocks/customers/nvidia.svg" alt="Nvidia Logo"></div>
+                                    <div class="slider-item"><img src="https://html.tailus.io/blocks/customers/column.svg" alt="Column Logo"></div>
+                                    <div class="slider-item"><img src="https://html.tailus.io/blocks/customers/github.svg" alt="GitHub Logo"></div>
+                                    <div class="slider-item"><img src="https://html.tailus.io/blocks/customers/nike.svg" alt="Nike Logo"></div>
+                                    <div class="slider-item"><img src="https://html.tailus.io/blocks/customers/lemonsqueezy.svg" alt="Lemon Squeezy Logo"></div>
+                                    <div class="slider-item"><img src="https://html.tailus.io/blocks/customers/laravel.svg" alt="Laravel Logo"></div>
+                                    <div class="slider-item"><img src="https://html.tailus.io/blocks/customers/openai.svg" alt="OpenAI Logo"></div>
+                                </div>
+                                <div class="slider-blur-left"></div>
+                                <div class="slider-blur-right"></div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- NEW SERVICES SECTION -->
+                <section class="new-services-section">
+                    <div class="container">
+                        <div class="services-grid">
+                            <div class="services-text-content">
+                                <h3 class="services-subtitle">What We Offer</h3>
+                                <h2>Our Services</h2>
+                                <p>We provide expert food formulation and drink development solutions to startups and growing brands, transforming their innovative ideas into shelf-ready products through advanced R&D, recipe formulation, and scalable contract manufacturing.</p>
+                                <div class="services-cta-block">
+                                    <a href="#" class="btn btn-black js-open-modal">Get Started</a>
+                                </div>
+                            </div>
+                            <div class="services-carousel-wrapper">
+                                <div class="services-carousel" id="services-carousel">
+                                    <div class="service-card">
+                                        <img src="https://images.pexels.com/photos/8141364/pexels-photo-8141364.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1" alt="Business meeting for contract manufacturing">
+                                        <div class="service-card-overlay"></div>
+                                        <span class="service-card-number">01</span>
+                                        <div class="service-card-content">
+                                            <h3>Contract Manufacturing</h3>
+                                            <a href="#" class="service-arrow-btn"><i class="fas fa-arrow-right"></i></a>
+                                        </div>
+                                    </div>
+                                    <div class="service-card">
+                                        <img src="https://images.pexels.com/photos/7176319/pexels-photo-7176319.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1" alt="Food scientists consulting in a lab">
+                                        <div class="service-card-overlay"></div>
+                                        <span class="service-card-number">02</span>
+                                        <div class="service-card-content">
+                                            <h3>Food Consulting</h3>
+                                            <a href="#" class="service-arrow-btn"><i class="fas fa-arrow-right"></i></a>
+                                        </div>
+                                    </div>
+                                    <div class="service-card">
+                                        <img src="https://images.pexels.com/photos/5473213/pexels-photo-5473213.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1" alt="Chef preparing a recipe in a kitchen">
+                                        <div class="service-card-overlay"></div>
+                                        <span class="service-card-number">03</span>
+                                        <div class="service-card-content">
+                                            <h3>Recipe Formulation</h3>
+                                            <a href="#" class="service-arrow-btn"><i class="fas fa-arrow-right"></i></a>
+                                        </div>
+                                    </div>
+                                    <div class="service-card">
+                                        <img src="https://images.pexels.com/photos/3993212/pexels-photo-3993212.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1" alt="Scientist using a microscope for research and development">
+                                        <div class="service-card-overlay"></div>
+                                        <span class="service-card-number">04</span>
+                                        <div class="service-card-content">
+                                            <h3>R&D</h3>
+                                            <a href="#" class="service-arrow-btn"><i class="fas fa-arrow-right"></i></a>
+                                        </div>
+                                    </div>
+                            
+                        </div>
+                    </div>
+                </section>
+                
+                <section class="our-members-section">
+                    <div class="container">
+                        <div class="section-title">
+                            <h3>Brands We've Worked With:</h3>
+                        </div>
+                        <div class="logo-scroller">
+                            <div class="logo-scroller-track">
+                                <!-- Duplicated items are intentional for the infinite scroll effect -->
+                                <div class="member-logo-item"><img src="https://upload.wikimedia.org/wikipedia/commons/c/ce/Coca-Cola_logo.svg" alt="Coca-Cola Logo"></div>
+                                <div class="member-logo-item"><img src="https://upload.wikimedia.org/wikipedia/commons/3/36/McDonald%27s_Golden_Arches.svg" alt="McDonald's Logo"></div>
+                                <div class="member-logo-item"><img src="https://upload.wikimedia.org/wikipedia/commons/b/b3/Nestle.svg" alt="Nestle Logo"></div>
+                                <div class="member-logo-item"><img src="https://upload.wikimedia.org/wikipedia/commons/d/d3/Starbucks_Corporation_Logo_2011.svg" alt="Starbucks Logo"></div>
+                                <div class="member-logo-item"><img src="https://upload.wikimedia.org/wikipedia/en/thumb/9/91/KFC_logo.svg/1200px-KFC_logo.svg.png" alt="KFC Logo"></div>
+                                <div class="member-logo-item"><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/c/ca/Pepsico_logo_2008.svg/1280px-Pepsico_logo_2008.svg.png" alt="PepsiCo Logo"></div>
+                                <div class="member-logo-item"><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/8/85/Burger_King_logo_%281999%29.svg/200px-Burger_King_logo_%281999%29.svg.png" alt="Burger King Logo"></div>
+                                <div class="member-logo-item"><img src="https://upload.wikimedia.org/wikipedia/commons/c/ce/Coca-Cola_logo.svg" alt="Coca-Cola Logo"></div>
+                                <div class="member-logo-item"><img src="https://upload.wikimedia.org/wikipedia/commons/3/36/McDonald%27s_Golden_Arches.svg" alt="McDonald's Logo"></div>
+                                <div class="member-logo-item"><img src="https://upload.wikimedia.org/wikipedia/commons/b/b3/Nestle.svg" alt="Nestle Logo"></div>
+                                <div class="member-logo-item"><img src="https://upload.wikimedia.org/wikipedia/commons/d/d3/Starbucks_Corporation_Logo_2011.svg" alt="Starbucks Logo"></div>
+                                <div class="member-logo-item"><img src="https://upload.wikimedia.org/wikipedia/en/thumb/9/91/KFC_logo.svg/1200px-KFC_logo.svg.png" alt="KFC Logo"></div>
+                                <div class="member-logo-item"><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/c/ca/Pepsico_logo_2008.svg/1280px-Pepsico_logo_2008.svg.png" alt="PepsiCo Logo"></div>
+                                <div class="member-logo-item"><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/8/85/Burger_King_logo_%281999%29.svg/200px-Burger_King_logo_%281999%29.svg.png" alt="Burger King Logo"></div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <section class="customer-trust-section">
+                    <div class="container">
+                        <div class="trust-layout">
+                            <div class="trust-logos">
+                                <div class="trust-logo-item"><img src="https://assets-global.website-files.com/645cec60ffb19d3635a3315a/645cf7d8536138673f418579_1-am.svg" alt="1-AM Logo"></div>
+                                <div class="trust-logo-item"><img src="https://assets-global.website-files.com/645cec60ffb19d3635a3315a/645cf7d8d249b2c3a51f49d2_deep-root.svg" alt="Deep Root Logo"></div>
+                                <div class="trust-logo-item"><img src="https://assets-global.website-files.com/645cec60ffb19d3635a3315a/645cf7d81a94356a422b4065_fluke.svg" alt="Fluke Logo"></div>
+                                <div class="trust-logo-item"><img src="https://assets-global.website-files.com/645cec60ffb19d3635a3315a/645cf7d9b9360811e50f5319_green-hoth.svg" alt="Green Hoth Logo"></div>
+                                <div class="trust-logo-item"><img src="https://assets-global.website-files.com/645cec60ffb19d3635a3315a/645cf7d885e34221a711f5a5_wow-momo.svg" alt="Wow! Momo Logo"></div>
+                                <div class="trust-logo-item"><img src="https://assets-global.website-files.com/645cec60ffb19d3635a3315a/645cf7d89617751c9d4ea8a4_bumzys.svg" alt="Bumzy's Logo"></div>
+                                <div class="trust-logo-item"><img src="https://assets-global.website-files.com/645cec60ffb19d3635a3315a/645cf7d8380d3c52e4fdd285_the-bobalist.svg" alt="The Bobalist Logo"></div>
+                                <div class="trust-logo-item"><img src="https://assets-global.website-files.com/645cec60ffb19d3635a3315a/645cf7d8ba39c42a25a52865_grofers.svg" alt="Grofers Logo"></div>
+                                <div class="trust-logo-item"><img src="https://assets-global.website-files.com/645cec60ffb19d3635a3315a/645cf7d91d3c8c5a61d15277_stroom.svg" alt="Stroom Logo"></div>
+                                <div class="trust-logo-item"><img src="https://assets-global.website-files.com/645cec60ffb19d3635a3315a/645cf7d894101c6c03dc3712_gm-foods.svg" alt="GM Foods Logo"></div>
+                                <div class="trust-logo-item"><img src="https://assets-global.website-files.com/645cec60ffb19d3635a3315a/645cf7d94f6c6b75c127402c_thames.svg" alt="Thames Logo"></div>
+                                <div class="trust-logo-item"><img src="https://assets-global.website-files.com/645cec60ffb19d3635a3315a/645cf7d9bc2799344873919f_real-dip.svg" alt="Real Dip Logo"></div>
+                                <div class="trust-logo-item"><img src="https://assets-global.website-files.com/645cec60ffb19d3635a3315a/645cf7d940608034a04d3e8a_himalayan-garden.svg" alt="Himalayan Garden Logo"></div>
+                                <div class="trust-logo-item"><img src="https://assets-global.website-files.com/645cec60ffb19d3635a3315a/645cf7d8a63503dd24c301c3_mantap.svg" alt="Mantap Logo"></div>
+                                <div class="trust-logo-item"><img src="https://assets-global.website-files.com/645cec60ffb19d3635a3315a/645cf7d9a63503dd24c301d5_functas.svg" alt="Functas Logo"></div>
+                                <div class="trust-logo-item"><img src="https://assets-global.website-files.com/645cec60ffb19d3635a3315a/645cf7d885e34221a711f5a4_hrl-foods.svg" alt="HRL Foods Logo"></div>
+                            </div>
+                            <div class="trust-cta">
+                                <h2 class="trust-title">Trusted By Our Customers & Partners</h2>
+                                <a href="#" class="btn btn-black">Explore More</a>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <section class="our-world-section">
+                    <div class="container">
+                        <div class="section-header">
+                            <h3 class="glance-subtitle">Foodsure Glance</h3>
+                            <h2>Our World</h2>
+                        </div>
+                    </div>
+                    <div class="world-carousel-wrapper">
+                        <div class="world-carousel" id="world-carousel">
+                            <div class="world-card"><img src="https://i.imgur.com/gKk57yG.png" alt="Foodsure at an exhibition"></div>
+                            <div class="world-card"><img src="https://i.imgur.com/G5g2m5V.png" alt="Foodsure whey protein supplement"></div>
+                            <div class="world-card"><img src="https://i.imgur.com/vHq4X2F.png" alt="Foodsure contact information"></div>
+                            <div class="world-card"><img src="https://i.imgur.com/E8W851E.png" alt="An expert from the Foodsure team"></div>
+                            <!-- Duplicate for scroll effect -->
+                            <div class="world-card"><img src="https://i.imgur.com/gKk57yG.png" alt="Foodsure at an exhibition"></div>
+                            <div class="world-card"><img src="https://i.imgur.com/G5g2m5V.png" alt="Foodsure whey protein supplement"></div>
+                        </div>
+                        <button class="world-nav-arrow world-nav-left" aria-label="Previous video">&#8249;</button>
+                        <button class="world-nav-arrow world-nav-right" aria-label="Next video">&#8250;</button>
+                    </div>
+                    <div class="floating-socials">
+                        <a href="#" class="social-icon linkedin"><i class="fab fa-linkedin-in"></i></a>
+                        <a href="#" class="social-icon phone"><i class="fas fa-phone"></i></a>
+                        <a href="#" class="social-icon whatsapp"><i class="fab fa-whatsapp"></i></a>
+                    </div>
+                </section>
+
+                <!-- NEW PARTNERSHIP SECTION -->
+                <section class="partner-section">
+                    <div class="container">
+                        <h2 class="section-title">The Fruits of Our Partnership</h2>
+                        <div class="logo-sliders-container">
+                            <!-- ROW 1: SCROLLS LEFT -->
+                            <div class="logo-slider">
+                                <div class="logo-track track-left">
+                                    <!-- Set 1 -->
+                                    <div class="logo-card"><img src="https://assets-global.website-files.com/645cec60ffb19d3635a3315a/645cf92d29517551a13437d8_agasthya.svg" alt="Agasthya Logo"></div>
+                                    <div class="logo-card"><img src="https://assets-global.website-files.com/645cec60ffb19d3635a3315a/645cf92e40608034a04fa7f0_shanlis.svg" alt="Shanlis Logo"></div>
+                                    <div class="logo-card"><img src="https://assets-global.website-files.com/645cec60ffb19d3635a3315a/645cf92d536138673f4438Ff_avt.svg" alt="AVT Logo"></div>
+                                    <div class="logo-card"><img src="https://assets-global.website-files.com/645cec60ffb19d3635a3315a/645cf92e21e0e768e82a6132_honey-harvest.svg" alt="Honey Harvest Logo"></div>
+                                    <div class="logo-card"><img src="https://assets-global.website-files.com/645cec60ffb19d3635a3315a/645cf92ddf93014e3e3f05f4_ayuttva.svg" alt="Ayuttva Logo"></div>
+                                    <div class="logo-card"><img src="https://assets-global.website-files.com/645cec60ffb19d3635a3315a/645cf92d3f43b3554b525838_cleanse-high.svg" alt="Cleanse High Logo"></div>
+                                    <div class="logo-card"><img src="https://assets-global.website-files.com/645cec60ffb19d3635a3315a/645cf92d4f6c6b75c128ffc2_fibro.svg" alt="Fibro Logo"></div>
+                                    <!-- Set 1 (Duplicated) -->
+                                    <div class="logo-card"><img src="https://assets-global.website-files.com/645cec60ffb19d3635a3315a/645cf92d29517551a13437d8_agasthya.svg" alt="Agasthya Logo"></div>
+                                    <div class="logo-card"><img src="https://assets-global.website-files.com/645cec60ffb19d3635a3315a/645cf92e40608034a04fa7f0_shanlis.svg" alt="Shanlis Logo"></div>
+                                    <div class="logo-card"><img src="https://assets-global.website-files.com/645cec60ffb19d3635a3315a/645cf92d536138673f4438Ff_avt.svg" alt="AVT Logo"></div>
+                                    <div class="logo-card"><img src="https://assets-global.website-files.com/645cec60ffb19d3635a3315a/645cf92e21e0e768e82a6132_honey-harvest.svg" alt="Honey Harvest Logo"></div>
+                                    <div class="logo-card"><img src="https://assets-global.website-files.com/645cec60ffb19d3635a3315a/645cf92ddf93014e3e3f05f4_ayuttva.svg" alt="Ayuttva Logo"></div>
+                                    <div class="logo-card"><img src="https://assets-global.website-files.com/645cec60ffb19d3635a3315a/645cf92d3f43b3554b525838_cleanse-high.svg" alt="Cleanse High Logo"></div>
+                                    <div class="logo-card"><img src="https://assets-global.website-files.com/645cec60ffb19d3635a3315a/645cf92d4f6c6b75c128ffc2_fibro.svg" alt="Fibro Logo"></div>
+                                </div>
+                            </div>
+                            <!-- ROW 2: SCROLLS RIGHT -->
+                            <div class="logo-slider">
+                                <div class="logo-track track-right">
+                                    <!-- Set 2 -->
+                                    <div class="logo-card"><img src="https://assets-global.website-files.com/645cec60ffb19d3635a3315a/645cf7d8536138673f418579_1-am.svg" alt="1-AM Logo"></div>
+                                    <div class="logo-card"><img src="https://assets-global.website-files.com/645cec60ffb19d3635a3315a/645cf7d8d249b2c3a51f49d2_deep-root.svg" alt="Deep Root Logo"></div>
+                                    <div class="logo-card"><img src="https://assets-global.website-files.com/645cec60ffb19d3635a3315a/645cf7d81a94356a422b4065_fluke.svg" alt="Fluke Logo"></div>
+                                    <div class="logo-card"><img src="https://assets-global.website-files.com/645cec60ffb19d3635a3315a/645cf7d9b9360811e50f5319_green-hoth.svg" alt="Green Hoth Logo"></div>
+                                    <div class="logo-card"><img src="https://assets-global.website-files.com/645cec60ffb19d3635a3315a/645cf7d885e34221a711f5a5_wow-momo.svg" alt="Wow! Momo Logo"></div>
+                                    <div class="logo-card"><img src="https://assets-global.website-files.com/645cec60ffb19d3635a3315a/645cf7d89617751c9d4ea8a4_bumzys.svg" alt="Bumzy's Logo"></div>
+                                    <div class="logo-card"><img src="https://assets-global.website-files.com/645cec60ffb19d3635a3315a/645cf7d8380d3c52e4fdd285_the-bobalist.svg" alt="The Bobalist Logo"></div>
+                                    <!-- Set 2 (Duplicated) -->
+                                    <div class="logo-card"><img src="https://assets-global.website-files.com/645cec60ffb19d3635a3315a/645cf7d8536138673f418579_1-am.svg" alt="1-AM Logo"></div>
+                                    <div class="logo-card"><img src="https://assets-global.website-files.com/645cec60ffb19d3635a3315a/645cf7d8d249b2c3a51f49d2_deep-root.svg" alt="Deep Root Logo"></div>
+                                    <div class="logo-card"><img src="https://assets-global.website-files.com/645cec60ffb19d3635a3315a/645cf7d81a94356a422b4065_fluke.svg" alt="Fluke Logo"></div>
+                                    <div class="logo-card"><img src="https://assets-global.website-files.com/645cec60ffb19d3635a3315a/645cf7d9b9360811e50f5319_green-hoth.svg" alt="Green Hoth Logo"></div>
+                                    <div class="logo-card"><img src="https://assets-global.website-files.com/645cec60ffb19d3635a3315a/645cf7d885e34221a711f5a5_wow-momo.svg" alt="Wow! Momo Logo"></div>
+                                    <div class="logo-card"><img src="https://assets-global.website-files.com/645cec60ffb19d3635a3315a/645cf7d89617751c9d4ea8a4_bumzys.svg" alt="Bumzy's Logo"></div>
+                                    <div class="logo-card"><img src="https://assets-global.website-files.com/645cec60ffb19d3635a3315a/645cf7d8380d3c52e4fdd285_the-bobalist.svg" alt="The Bobalist Logo"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+                
+                <section class="testimonial-section">
+                    <div class="container">
+                        <div class="section-header">
+                            <h2>Stories that speak for themselves</h2>
+                        </div>
+                        <div class="testimonial-content">
+                            <div class="testimonial-quote">
+                                <p>“Food Maveriks has been our valuable associates in developing new ideas and thought process for our new products, bringing in excitement and nostalgia. They’ve been a great partner in developing our new products and we are looking forward to work with them in the near future.”</p>
+                                <div class="testimonial-author">
+                                    <div class="author-name">Mr. Ravi Kabra</div>
+                                    <div class="author-title">Ceo & Co-Founder, Skippi Ice Pops</div>
+                                </div>
+                            </div>
+                            <div class="testimonial-logo-wrapper">
+                                <img src="https://skippi.in/cdn/shop/files/logo.png?v=1614755928" alt="Skippi Ice Pops Logo">
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <section class="blog-preview-section">
+                    <div class="container">
+                        <div class="section-header">
+                            <h2>Brands we helped<br>navigate to success</h2>
+                        </div>
+                        <div class="blog-grid">
+                            <a href="#" class="blog-card">
+                                <div class="blog-card-image">
+                                    <img src="https://images.pexels.com/photos/2280547/pexels-photo-2280547.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1" alt="Abstract representation of technology in food processing">
+                                </div>
+                                <div class="blog-card-content">
+                                    <h3>Exploring the Revolutionary Potential of Ultrasound Technology in Food Processing</h3>
+                                    <span class="read-more">Read More &rarr;</span>
+                                </div>
+                            </a>
+                            <a href="#" class="blog-card">
+                                <div class="blog-card-image">
+                                    <img src="https://images.pexels.com/photos/3825586/pexels-photo-3825586.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1" alt="Food scientist carefully developing a new product">
+                                </div>
+                                <div class="blog-card-content">
+                                    <h3>How Food and Beverage Consultant Can Help You to Carefully Develop a New Food Product</h3>
+                                    <span class="read-more">Read More &rarr;</span>
+                                </div>
+                            </a>
+                            <a href="#" class="blog-card">
+                                <div class="blog-card-image">
+                                    <img src="https://images.pexels.com/photos/164516/pexels-photo-164516.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1" alt="Keys on a book symbolizing protection of formulation">
+                                </div>
+                                <div class="blog-card-content">
+                                    <h3>7 Steps to Protect Your Food Product Formulation</h3>
+                                    <span class="read-more">Read More &rarr;</span>
+                                </div>
+                            </a>
+                        </div>
+                    </div>
+                </section>
+
+                <section class="final-cta-section">
+                    <div class="container">
+                        <div class="cta-banner">
+                            <div class="cta-background-pattern">
+                                <svg width="401" height="343" viewBox="0 0 401 343" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                    <path d="M256.453 342.924C183.143 342.924 123.943 283.724 123.943 210.414C123.943 137.104 183.143 77.9043 256.453 77.9043C309.283 77.9043 354.803 109.994 376.243 155.154C392.483 125.044 400.903 90.7243 400.903 54.6643C400.903 24.5543 376.243 0.174316 345.543 0.174316C298.543 0.174316 256.453 35.8043 256.453 82.8043C256.453 100.984 260.613 118.044 267.493 132.884C244.593 104.904 210.813 87.8043 173.203 87.8043C100.273 87.8043 41.3433 146.734 41.3433 219.664C41.3433 292.594 100.273 351.524 173.203 351.524C216.643 351.524 255.733 331.064 279.793 299.744C277.713 315.604 270.833 329.804 256.453 342.924Z" fill="white"/>
+                                </svg>
+                            </div>
+                            <div class="cta-image-wrapper">
+                                <img src="https://i.imgur.com/HqO4s1m.png" alt="A food scientist in a lab coat holding a tablet">
+                            </div>
+                            <div class="cta-content">
+                                <h2>Join the experts in food innovation</h2>
+                                <p>We are reinventing the food industry and want you to be part of it.</p>
+                                <a href="#" class="btn btn-yellow js-open-modal">Contact Us</a>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+                
+            </main>
+
+            <div id="consultation-modal" class="modal-overlay">
+                <div class="modal-content">
+                    <button type="button" class="modal-close-btn" aria-label="Close modal">&times;</button>
+                    <h3>Book Your Free Consultation</h3>
+                    <form id="consultation-form">
+                        <div class="form-group">
+                            <label for="name">Full Name</label>
+                            <input type="text" id="name" name="name" required autocomplete="name">
+                        </div>
+                        <div class="form-group">
+                            <label for="email">Email Address</label>
+                            <input type="email" id="email" name="email" required autocomplete="email">
+                        </div>
+                        <div class="form-group">
+                            <label for="company">Company (Optional)</label>
+                            <input type="text" id="company" name="company" autocomplete="organization">
+                        </div>
+                        <div class="form-group">
+                            <label for="message">Tell us about your project</label>
+                            <textarea id="message" name="message" required></textarea>
+                        </div>
+                        <button type="submit" class="btn" style="width: 100%; justify-content: center; background: var(--gradient-primary);">
+                            Submit Request
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+        
+        <footer class="site-footer">
+            <div class="container">
+                <div class="footer-grid">
+                    <div class="footer-column">
+                        <a href="/">
+                            <img src="https://i.imgur.com/7Z4N2rF.png" alt="Food Maveriks Logo" class="footer-logo">
+                        </a>
+                        <p>Innovating the future of food and beverages, one delicious product at a time. Your vision, our expertise.</p>
+                    </div>
+                    <div class="footer-column">
+                        <h4>Quick Links</h4>
+                        <ul class="footer-links">
+                            <li><a href="#">Services</a></li>
+                            <li><a href="#">About Us</a></li>
+                            <li><a href="#">Our Process</a></li>
+                            <li><a href="#">Blog</a></li>
+                        </ul>
+                    </div>
+                    <div class="footer-column">
+                        <h4>Legal</h4>
+                        <ul class="footer-links">
+                            <li><a href="#">Privacy Policy</a></li>
+                            <li><a href="#">Terms of Service</a></li>
+                            <li><a href="#">Contact Us</a></li>
+                        </ul>
+                    </div>
+                    <div class="footer-column">
+                        <h4>Contact Info</h4>
+                        <ul class="footer-contact-info">
+                            <li><i class="fas fa-map-marker-alt"></i><span>123 Foodie Lane,<br>Flavor Town, FT 54321</span></li>
+                            <li><i class="fas fa-envelope"></i><a href="mailto:hello@foodmaveriks.com" style="color: inherit; text-decoration: none;">hello@foodmaveriks.com</a></li>
+                            <li><i class="fas fa-phone"></i><a href="tel:+1234567890" style="color: inherit; text-decoration: none;">+1 (234) 567-890</a></li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="footer-bottom-bar">
+                    <p>&copy; 2024 Food Maveriks. All Rights Reserved.</p>
+                    <div class="footer-socials">
+                        <a href="#" aria-label="LinkedIn"><i class="fab fa-linkedin-in"></i></a>
+                        <a href="#" aria-label="Facebook"><i class="fab fa-facebook-f"></i></a>
+                        <a href="#" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
+                        <a href="#" aria-label="Twitter"><i class="fab fa-twitter"></i></a>
+                    </div>
+                </div>
+            </div>
+        </footer>
+                        
+        <!-- ======================= -->
+        <!--  JAVASCRIPT SECTIONS    -->
+        <!-- ======================= -->
+
+        <script>
+            // --- VAPOUR TEXT LOADING SCRIPT ---
+            document.addEventListener("DOMContentLoaded", () => {
+                const config = {
+                    texts: ["Food Maveriks"],
+                    font: {
+                        fontFamily: "Inter, sans-serif",
+                        fontSize: "90px",
+                        fontWeight: 600
+                    },
+                    color: "rgb(255, 255, 255)",
+                    spread: 5,
+                    density: 5,
+                    animation: { vaporizeDuration: 2, fadeInDuration: 1, waitDuration: 0.5 },
+                    direction: "left-to-right",
+                    alignment: "center",
+                    tag: "h1"
+                };
+                
+                const canvas = document.getElementById('vapour-canvas');
+                const seoElement = document.getElementById('seo-text');
+                if (!canvas || !seoElement) return;
+
+                const ctx = canvas.getContext('2d');
+                let particles = [];
+                let currentTextIndex = 0;
+                let animationState = "fadingIn";
+                let vaporizeProgress = 0;
+                let fadeOpacity = 0;
+                let lastTime = 0;
+                let animationFrameId = null;
+
+                const dpr = window.devicePixelRatio * 1.5 || 1;
+                const transformedDensity = transformValue(config.density, [0, 10], [0.3, 1], true);
+                const animationDurations = {
+                    VAPORIZE_DURATION: config.animation.vaporizeDuration * 1000,
+                    FADE_IN_DURATION: config.animation.fadeInDuration * 1000,
+                    WAIT_DURATION: config.animation.waitDuration * 1000,
+                };
+
+                function init() {
+                    handleResize();
+                    animationFrameId = requestAnimationFrame(animate);
+                    window.addEventListener('resize', handleResize);
+                }
+
+                function handleResize() {
+                    const { innerWidth: width, innerHeight: height } = window;
+                    canvas.style.width = `${width}px`;
+                    canvas.style.height = `${height}px`;
+                    canvas.width = Math.floor(width * dpr);
+                    canvas.height = Math.floor(height * dpr);
+                    renderCanvas();
+                }
+
+                function animate(currentTime) {
+                    const deltaTime = (currentTime - lastTime) / 1000 || 0;
+                    lastTime = currentTime;
+                    ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+                    switch (animationState) {
+                        case "vaporizing":
+                            vaporizeProgress += deltaTime * 100 / (animationDurations.VAPORIZE_DURATION / 1000);
+                            const textBoundaries = canvas.textBoundaries;
+                            if (textBoundaries) {
+                                const progress = Math.min(100, vaporizeProgress);
+                                const vaporizeX = config.direction === "left-to-right" ? textBoundaries.left + textBoundaries.width * progress / 100 : textBoundaries.right - textBoundaries.width * progress / 100;
+                                const allVaporized = updateParticles(particles, vaporizeX, deltaTime);
+                                renderParticles(ctx, particles);
+
+                                if (vaporizeProgress >= 100 && allVaporized) {
+                                    if (currentTextIndex === config.texts.length - 1) {
+                                        finishLoading();
+                                        return;
+                                    }
+                                    currentTextIndex++;
+                                    animationState = "fadingIn";
+                                    fadeOpacity = 0;
+                                    renderCanvas();
+                                }
+                            }
+                            break;
+                        case "fadingIn":
+                            fadeOpacity += deltaTime * 1000 / animationDurations.FADE_IN_DURATION;
+                            ctx.save();
+                            ctx.scale(dpr, dpr);
+                            particles.forEach(p => {
+                                p.x = p.originalX; p.y = p.originalY;
+                                const opacity = Math.min(fadeOpacity, 1) * p.originalAlpha;
+                                const color = p.color.replace(/[\d.]+\)$/, `${opacity})`);
+                                ctx.fillStyle = color;
+                                ctx.fillRect(p.x / dpr, p.y / dpr, 1, 1);
+                            });
+                            ctx.restore();
+                            if (fadeOpacity >= 1) {
+                                animationState = "waiting";
+                                setTimeout(() => {
+                                    animationState = "vaporizing";
+                                    vaporizeProgress = 0;
+                                    resetParticles(particles);
+                                }, animationDurations.WAIT_DURATION);
+                            }
+                            break;
+                        case "waiting":
+                            renderParticles(ctx, particles);
+                            break;
+                    }
+                    animationFrameId = requestAnimationFrame(animate);
+                }
+                
+                function finishLoading() {
+                    cancelAnimationFrame(animationFrameId);
+                    const loadingContainer = document.getElementById('loading-container');
+                    const mainContent = document.getElementById('main-content-wrapper');
+
+                    loadingContainer.style.opacity = '0';
+                    mainContent.style.pointerEvents = 'auto';
+                    mainContent.style.opacity = '1';
+
+                    setTimeout(() => {
+                        loadingContainer.remove();
+                        document.body.style.overflowY = 'auto';
+                        document.body.style.overflowX = 'hidden';
+                    }, 1000);
+                }
+
+                function renderCanvas() {
+                    const { width, height } = canvas;
+                    if (!width || !height) return;
+                    const fontSize = parseInt(config.font.fontSize.replace("px", "") || "50");
+                    const fontStyle = `${config.font.fontWeight} ${fontSize * dpr}px ${config.font.fontFamily}`;
+                    const color = parseColor(config.color);
+                    const currentText = config.texts[currentTextIndex];
+                    let textX;
+                    const textY = height / 2;
+                    if (config.alignment === "center") textX = width / 2;
+                    else if (config.alignment === "left") textX = 0;
+                    else textX = width;
+                    const { particles: newParticles, textBoundaries } = createParticles(ctx, canvas, currentText, textX, textY, fontStyle, color, config.alignment);
+                    particles = newParticles;
+                    canvas.textBoundaries = textBoundaries;
+                }
+
+                function createParticles(ctx, canvas, text, textX, textY, font, color, alignment) {
+                    let newParticles = [];
+                    ctx.clearRect(0, 0, canvas.width, canvas.height);
+                    ctx.fillStyle = color;
+                    ctx.font = font;
+                    ctx.textAlign = alignment;
+                    ctx.textBaseline = "middle";
+                    const metrics = ctx.measureText(text);
+                    let textLeft;
+                    const textWidth = metrics.width;
+                    if (alignment === "center") textLeft = textX - textWidth / 2;
+                    else if (alignment === "left") textLeft = textX;
+                    else textLeft = textX - textWidth;
+                    const textBoundaries = { left: textLeft, right: textLeft + textWidth, width: textWidth };
+                    ctx.fillText(text, textX, textY);
+                    const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+                    const data = imageData.data;
+                    const sampleRate = Math.max(1, Math.round(dpr / 1.5));
+                    for (let y = 0; y < canvas.height; y += sampleRate) {
+                        for (let x = 0; x < canvas.width; x += sampleRate) {
+                            const index = (y * canvas.width + x) * 4;
+                            const alpha = data[index + 3];
+                            if (alpha > 0) {
+                                const originalAlpha = alpha / 255 * (sampleRate / dpr);
+                                newParticles.push({
+                                    x, y, originalX: x, originalY: y,
+                                    color: `rgba(${data[index]}, ${data[index + 1]}, ${data[index + 2]}, ${originalAlpha})`,
+                                    opacity: originalAlpha, originalAlpha,
+                                    velocityX: 0, velocityY: 0, angle: 0, speed: 0
+                                });
+                            }
+                        }
+                    }
+                    ctx.clearRect(0, 0, canvas.width, canvas.height);
+                    return { particles: newParticles, textBoundaries };
+                }
+
+                function updateParticles(particles, vaporizeX, deltaTime) {
+                    let allParticlesVaporized = true;
+                    const fontSize = parseInt(config.font.fontSize.replace("px", "") || "50");
+                    const VAPORIZE_SPREAD = calculateVaporizeSpread(fontSize);
+                    const MULTIPLIED_VAPORIZE_SPREAD = VAPORIZE_SPREAD * config.spread;
+                    particles.forEach(p => {
+                        const shouldVaporize = config.direction === "left-to-right" ? p.originalX <= vaporizeX : p.originalX >= vaporizeX;
+                        if (shouldVaporize) {
+                            if (p.speed === 0) {
+                                p.angle = Math.random() * Math.PI * 2;
+                                p.speed = (Math.random() * 1 + 0.5) * MULTIPLIED_VAPORIZE_SPREAD;
+                                p.velocityX = Math.cos(p.angle) * p.speed;
+                                p.velocityY = Math.sin(p.angle) * p.speed;
+                                p.shouldFadeQuickly = Math.random() > transformedDensity;
+                            }
+                            if (p.shouldFadeQuickly) { p.opacity = Math.max(0, p.opacity - deltaTime); } 
+                            else {
+                                p.x += p.velocityX * deltaTime * 20;
+                                p.y += p.velocityY * deltaTime * 10;
+                                const fadeRate = 0.25 * (2000 / animationDurations.VAPORIZE_DURATION);
+                                p.opacity = Math.max(0, p.opacity - deltaTime * fadeRate);
+                            }
+                            if (p.opacity > 0.01) allParticlesVaporized = false;
+                        } else { allParticlesVaporized = false; }
+                    });
+                    return allParticlesVaporized;
+                }
+
+                function renderParticles(ctx, particles) {
+                    ctx.save();
+                    ctx.scale(dpr, dpr);
+                    particles.forEach(p => {
+                        if (p.opacity > 0) {
+                            const color = p.color.replace(/[\d.]+\)$/, `${p.opacity})`);
+                            ctx.fillStyle = color;
+                            ctx.fillRect(p.x / dpr, p.y / dpr, 1, 1);
+                        }
+                    });
+                    ctx.restore();
+                }
+
+                function resetParticles(particles) {
+                    particles.forEach(p => {
+                        p.x = p.originalX; p.y = p.originalY; p.opacity = p.originalAlpha;
+                        p.speed = 0; p.velocityX = 0; p.velocityY = 0;
+                    });
+                }
+
+                function calculateVaporizeSpread(fontSize) {
+                    const points = [{ size: 20, spread: 0.2 }, { size: 50, spread: 0.5 }, { size: 100, spread: 1.5 }];
+                    if (fontSize <= points[0].size) return points[0].spread;
+                    if (fontSize >= points[points.length - 1].size) return points[points.length - 1].spread;
+                    let i = 0;
+                    while (i < points.length - 1 && points[i + 1].size < fontSize) i++;
+                    const p1 = points[i]; const p2 = points[i + 1];
+                    return p1.spread + (fontSize - p1.size) * (p2.spread - p1.spread) / (p2.size - p1.size);
+                }
+
+                function parseColor(color) {
+                    const match = color.match(/rgb\((\d+),\s*(\d+),\s*(\d+)\)/);
+                    if (match) return `rgba(${match[1]}, ${match[2]}, ${match[3]}, 1)`;
+                    return "rgba(0, 0, 0, 1)";
+                }
+
+                function transformValue(input, inputRange, outputRange, clamp = false) {
+                    const [inputMin, inputMax] = inputRange;
+                    const [outputMin, outputMax] = outputRange;
+                    const progress = (input - inputMin) / (inputMax - inputMin);
+                    let result = outputMin + progress * (outputMax - outputMin);
+                    if (clamp) result = Math.min(Math.max(result, Math.min(outputMin, outputMax)), Math.max(outputMin, outputMax));
+                    return result;
+                }
+
+                init();
+            });
+
+
+            // --- FOOD MAVERIKS MAIN SITE SCRIPT ---
+            document.addEventListener('DOMContentLoaded', () => {
+                gsap.registerPlugin(ScrollTrigger);
+
+                // Hero Animation
+                gsap.set(['.hero-headline', '.hero-paragraph', '.hero-content .btn', '.service-item'], { autoAlpha: 0, y: 30 });
+                gsap.set('.hero-product img', { autoAlpha: 0, scale: 0.95 });
+                
+                const heroTl = gsap.timeline({ defaults: { ease: 'power3.out' } });
+                
+                heroTl.to('.hero-headline', { autoAlpha: 1, y: 0, duration: 1, delay: 0.3 })
+                    .to('.hero-paragraph', { autoAlpha: 1, y: 0, duration: 0.8 }, "-=0.8")
+                    .to('.hero-content .btn', { autoAlpha: 1, y: 0, duration: 0.8 }, "-=0.6")
+                    .to('.service-item', { autoAlpha: 1, y: 0, duration: 0.6, stagger: 0.1 }, "-=0.6")
+                    .to('.hero-product img', { autoAlpha: 1, scale: 1, duration: 1.2 }, "-=1.2");
+
+                // Complex Hero Image to Card Image Transition
+                const heroImage = document.getElementById('hero-product-img');
+                const heroContainer = document.getElementById('hero-product-container');
+                const cardImageContainer = document.getElementById('card-image-container');
+                if (heroImage && heroContainer && cardImageContainer) {
+                    const cardImage = cardImageContainer.querySelector('img');
+                    let initialHeroRect;
+                    const setupInitialState = () => {
+                        heroImage.style.position = '';
+                        heroImage.style.transform = '';
+                        if(heroImage.offsetParent) { initialHeroRect = heroImage.getBoundingClientRect(); heroContainer.style.height = `${initialHeroRect.height}px`; }
+                    };
+                    const handleScroll = () => {
+                        if (!initialHeroRect || window.innerWidth < 992) return;
+                        const scrollY = window.scrollY;
+                        const targetRect = cardImageContainer.getBoundingClientRect();
+                        const animationEndScroll = cardImageContainer.offsetTop - (window.innerHeight * 0.25);
+                        let progress = Math.min(1, Math.max(0, scrollY / animationEndScroll));
+                        if (scrollY > 0 && progress < 1) {
+                            const translateX = targetRect.left - initialHeroRect.left;
+                            const translateY = targetRect.top - initialHeroRect.top;
+                            const scale = targetRect.width / initialHeroRect.width;
+                            heroImage.style.position = 'fixed';
+                            heroImage.style.top = `${initialHeroRect.top}px`;
+                            heroImage.style.left = `${initialHeroRect.left}px`;
+                            heroImage.style.transform = `translate(${translateX * progress}px, ${translateY * progress}px) scale(${1 + (scale - 1) * progress})`;
+                            heroImage.style.opacity = '1';
+                            if(cardImage) cardImage.style.opacity = '0';
+                        } else if (progress >= 1) {
+                            heroImage.style.opacity = '0';
+                            if(cardImage) cardImage.style.opacity = '1';
+                        } else {
+                            heroImage.style.position = '';
+                            heroImage.style.transform = '';
+                            heroImage.style.opacity = '1';
+                            if(cardImage) cardImage.style.opacity = '0';
+                        }
+                    };
+                    heroTl.eventCallback('onComplete', () => {
+                        setupInitialState();
+                        handleScroll();
+                        window.addEventListener('scroll', handleScroll);
+                        window.addEventListener('resize', () => { setupInitialState(); handleScroll(); });
+                    });
+                }
+
+                // Modal Logic
+                const modal = document.getElementById('consultation-modal');
+                const openBtns = document.querySelectorAll('.js-open-modal');
+                const closeBtn = document.querySelector('.modal-close-btn');
+                const form = document.getElementById('consultation-form');
+                if (modal && openBtns.length && closeBtn && form) {
+                    const openModal = () => modal.classList.add('active');
+                    const closeModal = () => modal.classList.remove('active');
+                    openBtns.forEach(btn => btn.addEventListener('click', e => { e.preventDefault(); openModal(); }));
+                    closeBtn.addEventListener('click', closeModal);
+                    modal.addEventListener('click', e => { if (e.target === modal) closeModal(); });
+                    form.addEventListener('submit', e => { e.preventDefault(); alert('Thank you! We will be in touch shortly.'); closeModal(); form.reset(); });
+                }
+                
+                // --- "STICKY SCROLLING" PROCESS SECTION SCRIPT ---
+                const processSection = document.querySelector('.process-section-sticky');
+                if (processSection && window.matchMedia("(min-width: 993px)").matches) {
+                    const textBlocks = gsap.utils.toArray('.step-text-block');
+                    const imageTargets = gsap.utils.toArray('.process-visuals img');
+
+                    if (textBlocks.length > 0) textBlocks[0].classList.add('active');
+                    if (imageTargets.length > 0) imageTargets[0].classList.add('active');
+
+                    textBlocks.forEach((block, i) => {
+                        ScrollTrigger.create({
+                            trigger: block,
+                            start: 'top center',
+                            end: 'bottom center',
+                            onToggle: self => {
+                                if (self.isActive) {
+                                    textBlocks.forEach(b => b.classList.remove('active'));
+                                    imageTargets.forEach(img => img.classList.remove('active'));
+                                    block.classList.add('active');
+                                    const targetImageId = block.getAttribute('data-image-target');
+                                    const targetImage = document.getElementById(targetImageId);
+                                    if (targetImage) {
+                                        targetImage.classList.add('active');
+                                    }
+                                }
+                            },
+                        });
+                    });
+                }
+
+                // --- FLIP STATS COUNTER SCRIPT ---
+                const statValues = document.querySelectorAll('.stat-value');
+                const easeOutQuad = (t) => t * (2 - t);
+                const animateCounter = (element) => {
+                    const target = parseInt(element.getAttribute('data-target'));
+                    const duration = 2000;
+                    const frameDuration = 1000 / 60;
+                    const totalFrames = Math.round(duration / frameDuration);
+                    let frame = 0;
+                    
+                    const counter = setInterval(() => {
+                        frame++;
+                        const progress = easeOutQuad(frame / totalFrames);
+                        const currentCount = Math.round(target * progress);
+                        
+                        const originalText = element.getAttribute('data-target');
+                        const hasPlus = element.parentElement.querySelector('.stat-value').nextElementSibling.textContent !== 'Client Satisfaction';
+                        const isPercentage = originalText.includes('%') || element.parentElement.querySelector('.stat-label').textContent.includes('Satisfaction');
+                        
+                        if (isPercentage) {
+                            element.textContent = currentCount + '%';
+                        } else if (hasPlus && element.parentElement.querySelector('.stat-label').textContent !== 'Client Satisfaction') {
+                            element.textContent = currentCount + '+';
+                        } else if (element.parentElement.querySelector('.stat-label').textContent === 'Client Satisfaction') {
+                            element.textContent = currentCount + '%';
+                        } else {
+                            element.textContent = currentCount + '+';
+                        }
+                        
+                        if (frame === totalFrames) {
+                            clearInterval(counter);
+                            if (isPercentage || element.parentElement.querySelector('.stat-label').textContent.includes('Satisfaction')) {
+                            element.textContent = target + '%';
+                            } else {
+                            element.textContent = target + '+';
+                            }
+                        }
+                    }, frameDuration);
+                };
+                
+                if ("IntersectionObserver" in window) {
+                    const observer = new IntersectionObserver((entries) => {
+                        entries.forEach(entry => {
+                        if (entry.isIntersecting) {
+                            animateCounter(entry.target);
+                            observer.unobserve(entry.target);
+                        }
+                        });
+                    }, { threshold: 0.5 });
+                    
+                    statValues.forEach(stat => {
+                        observer.observe(stat);
+                    });
+                }
+
+
+                // --- OUR WORLD CAROUSEL SCRIPT ---
+                const worldCarouselContainer = document.querySelector('.world-carousel-wrapper');
+                if (worldCarouselContainer) {
+                    const worldCarousel = worldCarouselContainer.querySelector('#world-carousel');
+                    const leftBtn = worldCarouselContainer.querySelector('.world-nav-left');
+                    const rightBtn = worldCarouselContainer.querySelector('.world-nav-right');
+
+                    if(worldCarousel && leftBtn && rightBtn) {
+                        const scrollAmount = worldCarousel.clientWidth * 0.8;
+                        leftBtn.addEventListener('click', () => {
+                            worldCarousel.scrollBy({ left: -scrollAmount, behavior: 'smooth' });
+                        });
+                        rightBtn.addEventListener('click', () => {
+                            worldCarousel.scrollBy({ left: scrollAmount, behavior: 'smooth' });
+                        });
+                    }
+                }
+
+                // Fixed Navigation on Scroll
+                const nav = document.querySelector('.main-nav');
+                const heroSection = document.querySelector('.hero-section');
+                if (nav && heroSection) { 
+                    ScrollTrigger.create({ 
+                        trigger: heroSection, 
+                        start: "bottom top", 
+                        onEnter: () => nav.classList.add('fixed-nav'), 
+                        onLeaveBack: () => nav.classList.remove('fixed-nav') 
+                    }); 
+                }
+                
+                // Pause Infinite Scroller on Hover
+                const infiniteSlider = document.getElementById('infiniteSlider');
+                if (infiniteSlider) {
+                    const sliderContent = infiniteSlider.parentElement;
+                    sliderContent.addEventListener('mouseenter', () => infiniteSlider.style.animationPlayState = 'paused');
+                    sliderContent.addEventListener('mouseleave', () => infiniteSlider.style.animationPlayState = 'running');
+                }
+                
+                // --- NEW SERVICES CAROUSEL SCRIPT ---
+                const servicesCarouselWrapper = document.querySelector('.services-carousel-wrapper');
+                if (servicesCarouselWrapper) {
+                    const carousel = servicesCarouselWrapper.querySelector('#services-carousel');
+                    const leftBtn = servicesCarouselWrapper.querySelector('.service-nav-left');
+                    const rightBtn = servicesCarouselWrapper.querySelector('.service-nav-right');
+                    if (carousel && leftBtn && rightBtn) {
+                        const scrollAmount = 320; // Width of a card + gap
+                        leftBtn.addEventListener('click', () => {
+                            carousel.scrollBy({ left: -scrollAmount, behavior: 'smooth' });
+                        });
+                        rightBtn.addEventListener('click', () => {
+                            carousel.scrollBy({ left: scrollAmount, behavior: 'smooth' });
+                        });
+                    }
+                }
+            });
+        </script>
+    </body>
+    </html>
